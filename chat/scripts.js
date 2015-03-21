@@ -17,7 +17,9 @@ function send (event) {
 	newMessage.value
 	+'<br><small class="text-muted"><span class="userNameEditDelete">'+
 	currentUserName.textContent
-	+'</span> | 23rd June at 5:00pm</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr></div></div></div></li>';
+	+'</span> | '+
+	getTime()
+	+'</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr></div></div></div></li>';
 	newMessage.value = '';
 	//scrollDown.scrollTop = scrollDown.scrollHeight;
 }
@@ -36,6 +38,12 @@ function showEditProfile (event) {
 	showFormEditProfile.innerHTML ='<form class="form-inline" id="formEditProfile"><div class="form-group"><input type="text" class="form-control" placeholder="Your name" id="inputEditProfile"></div><button type="submit" class="btn btn-info" id="buttonSubmitProfile">edit</button></form>'
 	buttonSubmitProfile = document.getElementById('buttonSubmitProfile');
 	buttonSubmitProfile.onclick = submitEditedProfile;
+}
+
+function getTime () {
+	var currentTime = new Date();
+	var result = currentTime.toDateString() + ' ' + currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+	return result;
 }
 
 function submitEditedProfile (event) {
