@@ -35,18 +35,16 @@ function enterTextArea (event) {
 
 function showEditProfile (event) {
 	var showFormEditProfile = document.getElementById('showFormEditProfile');
-	showFormEditProfile.innerHTML ='<form class="form-inline" id="formEditProfile"><div class="form-group"><input type="text" class="form-control" placeholder="Your name" id="inputEditProfile"></div><button type="submit" class="btn btn-info" id="buttonSubmitProfile">edit</button></form>'
+	showFormEditProfile.innerHTML ='<form class="form-inline" id="formEditProfile"><div class="form-group"><input type="text" class="form-control" placeholder="Your name" id="inputEditProfile"><button type="submit" class="btn btn-info" id="buttonSubmitProfile">edit</button></div></form>'
 	buttonSubmitProfile = document.getElementById('buttonSubmitProfile');
 	buttonSubmitProfile.onclick = submitEditedProfile;
 }
 
-function getTime () {
-	var currentTime = new Date();
-	var result = currentTime.toDateString() + ' ' + currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
-	return result;
-}
-
 function submitEditedProfile (event) {
+	//will not send form (reload page), if cleck submit button
+	if (event.preventDefault) {
+    event.preventDefault();
+   	} 
 	currentUserName = document.getElementById('currentUserName');
 	inputEditProfile = document.getElementById('inputEditProfile');
 	formEditProfile = document.getElementById('formEditProfile');
@@ -62,4 +60,10 @@ function submitEditedProfile (event) {
 			messagesArray[i].innerHTML = '<a href="#">Edit</a> | <a href="#">Delete</a>';
 		}
 	}
+}
+
+function getTime () {
+	var currentTime = new Date();
+	var result = currentTime.toDateString() + ' ' + currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+	return result;
 }
