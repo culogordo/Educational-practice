@@ -2,9 +2,23 @@ var run = function () {
 	var sendButton = document.getElementById('sendButton');
 	var newMessageTextArea = document.getElementById('newMessageTextArea');
 	var buttonEditProfile = document.getElementById('buttonEditProfile');
+	var currentUserName = document.getElementById('currentUserName');
+	currentUserName.textContent = restoreName() || 'Your name';
 	buttonEditProfile.onclick = showEditProfile;
 	sendButton.onclick = send;
 }();
+
+function storeName(nameToSave) {
+	var stringToSave = JSON.stringify(nameToSave);
+	localStorage.setItem("Previos name", stringToSave); 
+}
+
+function restoreName() {
+	var item = localStorage.getItem("Previos name"); 
+	if (item) return JSON.parse(item);
+	else return item;
+	//return item && JSON.parse(item); 
+}
 
 function send (event) {
 	//will not send form (reload page), if click submit button
@@ -43,6 +57,7 @@ function submitEditedProfile (event) {
 	inputEditProfile = document.getElementById('inputEditProfile');
 	formEditProfile = document.getElementById('formEditProfile');
 	currentUserName.innerHTML = inputEditProfile.value;
+	storeName(inputEditProfile.value);
 	formEditProfile.style.display = 'none';
 
 	var editeDeleteArray = document.getElementsByClassName('text-muted pull-right editDelete');
