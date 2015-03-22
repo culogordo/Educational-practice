@@ -20,6 +20,8 @@ function send (event) {
 	+'</span> | '+
 	getTime()
 	+'</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr></div></div></div></li>';
+	scanDeleteMessage ();
+
 	newMessage.value = '';
 	//scrollDown.scrollTop = scrollDown.scrollHeight;
 }
@@ -51,15 +53,35 @@ function submitEditedProfile (event) {
 	currentUserName.innerHTML = inputEditProfile.value;
 	formEditProfile.style.display = 'none';
 
-	var messagesArray = document.getElementsByClassName('text-muted pull-right editDelete');
+	var editeDeleteArray = document.getElementsByClassName('text-muted pull-right editDelete');
 	var usersArray = document.getElementsByClassName('userNameEditDelete');
 	for (var i = 0; i < usersArray.length; ++i) {
 		if (currentUserName.textContent !== usersArray[i].textContent) {
-			messagesArray[i].innerHTML = '';
+			editeDeleteArray[i].innerHTML = '';
 		} else if (currentUserName.textContent === usersArray[i].textContent){
-			messagesArray[i].innerHTML = '<a href="#">Edit</a> | <a href="#">Delete</a>';
+			editeDeleteArray[i].innerHTML = '<a href="#">Edit</a> | <a href="#">Delete</a>';
 		}
 	}
+	scanDeleteMessage ();
+}
+
+function scanDeleteMessage () {
+	var editeDeleteArray = document.getElementsByClassName('text-muted pull-right editDelete');
+	for (var i = 0; i < editeDeleteArray.length; ++i) {
+		if (editeDeleteArray[i].lastChild !== null) {
+			editeDeleteArray[i].lastChild.onclick = deleteMessage;
+		}
+	}
+}
+
+function deleteMessage (event) {
+	var deleteLi = event.target;
+	console.log(deleteLi);
+	while (deleteLi.tagName != 'LI') {
+		console.log(deleteLi.tagName);
+		deleteLi = deleteLi.parentNode;
+	}
+	deleteLi.innerHTML = '<div class="row"><div class="col-md-12 text-center"><small class="text-muted center">Message was deleted</small></div></div>';	
 }
 
 function getTime () {
