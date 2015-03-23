@@ -1,12 +1,19 @@
+var messageList = [];
+var messageCounter = 0;
 var run = function () {
-	var sendButton = document.getElementById('sendButton');
-	var newMessageTextArea = document.getElementById('newMessageTextArea');
-	var buttonEditProfile = document.getElementById('buttonEditProfile');
 	var currentUserName = document.getElementById('currentUserName');
-	currentUserName.textContent = restoreName() || 'Your name';
-	console.log(restoreMessages());
-	buttonEditProfile.onclick = showEditProfile;
-	sendButton.onclick = send;
+		currentUserName.textContent = restoreName() || 'Your name';
+	var lastSession = restoreMessages();
+		if (lastSession !== null) {
+			messageList = lastSession;
+			messageCounter = messageList.length;
+			innerRestoredMesseges(lastSession);
+			scanDeleteMessage ();
+		}
+	var sendButton = document.getElementById('sendButton');
+		sendButton.onclick = send;
+	var buttonEditProfile = document.getElementById('buttonEditProfile');
+		buttonEditProfile.onclick = showEditProfile;
 }();
 
 function storeName(nameToSave) {
@@ -24,13 +31,36 @@ function restoreName() {
 	//return item && JSON.parse(item); 
 }
 
-// send() ------------------ deleted, message, author. date, editDelete
+// send() ------------------ deleted, message, author, date, editDelete
 // editMessage() ---------- date, message 
 // submitEditedProfile() --- editDelete
 // deleteMessage() --------- deleted
 
-var messageList = [];
-var messageCounter = 0;
+function innerRestoredMesseges (_lastSession) {
+	var chatField = document.getElementById('chatField');
+	var size = _lastSession.length;
+	for (var i = 0; i < size; ++i) {
+		if (_lastSession[i].deleted === true) {
+			chatField.innerHTML += '<li class="media"><div class="row"><div class="col-md-12 text-center"><small class="text-muted center">Message was deleted</small></div></div></li>';
+		} else if (_lastSession[i].editDelete === true){
+					chatField.innerHTML += '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="user.png"></a><div class="media-body edit"><span class="currentChatText">'+
+					_lastSession[i].message
+					+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
+					_lastSession[i].author
+					+'</span> | '+
+					_lastSession[i].date
+					+ '</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr></div></div></div></li>';
+					} else {
+							chatField.innerHTML += '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="user.png"></a><div class="media-body edit"><span class="currentChatText">'+
+						_lastSession[i].message
+						+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
+						_lastSession[i].author
+						+'</span> | '+
+						_lastSession[i].date
+						+ '</small><small class="text-muted pull-right editDelete"></small><hr></div></div></div></li>';
+		}
+	} 
+}
 
 function storeSend(messageItem, _deleted, _message, _author, _date, _editDelete) {
 	messageItem = {
@@ -64,7 +94,7 @@ function storeMessages(nameMessageList) {
 	localStorage.setItem("Message list", stringToSave); 
 }
 
-function restoreMessages() {
+function restoreMessages () {
 	if(typeof(Storage) == "undefined") {
 		return;
 	}
@@ -137,7 +167,6 @@ function submitEditedProfile (event) {
 				++messageNumber;
 			}
 			messageList[messageNumber] = storeSubmitEditedProfile(messageList[messageNumber], false);
-			storeMessages(messageList);
 		} else if (currentUserName.textContent === usersArray[i].textContent){
 			editDeleteArray[i].innerHTML = '<a href="#">Edit</a> | <a href="#">Delete</a>';
 			
@@ -152,9 +181,9 @@ function submitEditedProfile (event) {
 				++messageNumber;
 			}
 			messageList[messageNumber] = storeSubmitEditedProfile(messageList[messageNumber], true);
-			storeMessages(messageList);
 		}
 	}
+	storeMessages(messageList);
 	scanDeleteMessage ();
 }
 
@@ -209,7 +238,7 @@ function editMessage (event) {
     			event.preventDefault();
    			}
    			editMessageTextArea.value = editMessageTextArea.value.replace(/\r?\n/g, '<br>');
-   			var currentTime = getTime();
+   			var currentTime = 'Message was edited on ' + getTime();
    			editLi.innerHTML = '<span class="currentChatText">'+
 			editMessageTextArea.value
 			+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
