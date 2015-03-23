@@ -4,6 +4,7 @@ var run = function () {
 	var buttonEditProfile = document.getElementById('buttonEditProfile');
 	var currentUserName = document.getElementById('currentUserName');
 	currentUserName.textContent = restoreName() || 'Your name';
+	console.log(restoreMessages());
 	buttonEditProfile.onclick = showEditProfile;
 	sendButton.onclick = send;
 }();
@@ -14,7 +15,60 @@ function storeName(nameToSave) {
 }
 
 function restoreName() {
+	if(typeof(Storage) == "undefined") {
+		return;
+	}
 	var item = localStorage.getItem("Previos name"); 
+	if (item) return JSON.parse(item);
+	else return item;
+	//return item && JSON.parse(item); 
+}
+
+// send() ------------------ deleted, message, author. date, editDelete
+// editMessage() ---------- date, message 
+// submitEditedProfile() --- editDelete
+// deleteMessage() --------- deleted
+
+var messageList = [];
+var messageCounter = 0;
+
+function storeSend(messageItem, _deleted, _message, _author, _date, _editDelete) {
+	messageItem = {
+		deleted: _deleted,
+		message: _message,
+ 		author:  _author,
+ 		date: _date,
+ 		editDelete:  _editDelete
+	};
+	return messageItem;
+}
+
+function storeEditMessage (messageItem, _date, _message) {
+	messageItem.message = _message;
+	messageItem.date = _date;
+	return messageItem;
+}
+
+function storeSubmitEditedProfile (messageItem, _editDelete) {
+	messageItem.editDelete = _editDelete;
+	return messageItem;
+}
+
+function storeDeleteMessage (messageItem, _deleted) {
+	messageItem.deleted = _deleted;
+	return messageItem;
+}
+
+function storeMessages(nameMessageList) {
+	var stringToSave = JSON.stringify(nameMessageList);
+	localStorage.setItem("Message list", stringToSave); 
+}
+
+function restoreMessages() {
+	if(typeof(Storage) == "undefined") {
+		return;
+	}
+	var item = localStorage.getItem("Message list"); 
 	if (item) return JSON.parse(item);
 	else return item;
 	//return item && JSON.parse(item); 
@@ -28,15 +82,21 @@ function send (event) {
 	var currentUserName = document.getElementById('currentUserName'); 	
 	var newMessageTextArea = document.getElementById('newMessageTextArea'); 
 	var chatField = document.getElementById('chatField');
-	newMessageTextArea.value = newMessageTextArea.value.replace(/\r?\n/g, '<br>');    							
+	newMessageTextArea.value = newMessageTextArea.value.replace(/\r?\n/g, '<br>');
+	var currentTime = getTime();     							
 	chatField.innerHTML += '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="user.png"></a><div class="media-body edit"><span class="currentChatText">'+
 	newMessageTextArea.value
 	+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
 	currentUserName.textContent
 	+'</span> | '+
-	getTime()
+	currentTime
 	+'</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr></div></div></div></li>';
 	scanDeleteMessage ();
+
+	messageList[messageCounter] = storeSend(messageList[messageCounter] ,false, newMessageTextArea.value, 
+		currentUserName.textContent, currentTime, true);
+	storeMessages(messageList);
+	++messageCounter;
 
 	newMessageTextArea.value = '';
 }
@@ -60,26 +120,52 @@ function submitEditedProfile (event) {
 	storeName(inputEditProfile.value);
 	formEditProfile.style.display = 'none';
 
-	var editeDeleteArray = document.getElementsByClassName('text-muted pull-right editDelete');
+	var editDeleteArray = document.getElementsByClassName('text-muted pull-right editDelete');
 	var usersArray = document.getElementsByClassName('userNameEditDelete');
 	for (var i = 0; i < usersArray.length; ++i) {
 		if (currentUserName.textContent !== usersArray[i].textContent) {
-			editeDeleteArray[i].innerHTML = '';
+			editDeleteArray[i].innerHTML = '';
+
+			var messageNumber = 0;
+			var editLi = editDeleteArray[i];
+			while (editLi.tagName != 'LI') {
+				editLi = editLi.parentNode;
+			}
+
+			while (editLi.previousSibling.tagName === 'LI') {
+				editLi = editLi.previousSibling;
+				++messageNumber;
+			}
+			messageList[messageNumber] = storeSubmitEditedProfile(messageList[messageNumber], false);
+			storeMessages(messageList);
 		} else if (currentUserName.textContent === usersArray[i].textContent){
-			editeDeleteArray[i].innerHTML = '<a href="#">Edit</a> | <a href="#">Delete</a>';
+			editDeleteArray[i].innerHTML = '<a href="#">Edit</a> | <a href="#">Delete</a>';
+			
+			var messageNumber = 0;
+			var editLi = editDeleteArray[i];
+			while (editLi.tagName != 'LI') {
+				editLi = editLi.parentNode;
+			}
+
+			while (editLi.previousSibling.tagName === 'LI') {
+				editLi = editLi.previousSibling;
+				++messageNumber;
+			}
+			messageList[messageNumber] = storeSubmitEditedProfile(messageList[messageNumber], true);
+			storeMessages(messageList);
 		}
 	}
 	scanDeleteMessage ();
 }
 
 function scanDeleteMessage () {
-	var editeDeleteArray = document.getElementsByClassName('text-muted pull-right editDelete');
-	for (var i = 0; i < editeDeleteArray.length; ++i) {
-		if (editeDeleteArray[i].lastChild !== null) {
-			editeDeleteArray[i].lastChild.onclick = deleteMessage;
+	var editDeleteArray = document.getElementsByClassName('text-muted pull-right editDelete');
+	for (var i = 0; i < editDeleteArray.length; ++i) {
+		if (editDeleteArray[i].lastChild !== null) {
+			editDeleteArray[i].lastChild.onclick = deleteMessage;
 		}
-		if(editeDeleteArray[i].firstChild !== null) {
-			editeDeleteArray[i].firstChild.onclick = editeMessage;
+		if(editDeleteArray[i].firstChild !== null) {
+			editDeleteArray[i].firstChild.onclick = editMessage;
 		}
 	}
 }
@@ -89,14 +175,23 @@ function deleteMessage (event) {
 	while (deleteLi.tagName != 'LI') {
 		deleteLi = deleteLi.parentNode;
 	}
-	deleteLi.innerHTML = '<div class="row"><div class="col-md-12 text-center"><small class="text-muted center">Message was deleted</small></div></div>';	
+	deleteLi.innerHTML = '<div class="row"><div class="col-md-12 text-center"><small class="text-muted center">Message was deleted</small></div></div>';
+
+	var messageNumber = 0;
+	while (deleteLi.previousSibling.tagName === 'LI') {
+		deleteLi = deleteLi.previousSibling;
+		++messageNumber;
+	}	
+	messageList[messageNumber] = storeDeleteMessage(messageList[messageNumber], true);
+	storeMessages(messageList);
 }
 
-function editeMessage (event) {
+function editMessage (event) {
 	var editLi = event.target;
 	while (editLi.className != 'media-body edit') {
 		editLi = editLi.parentNode;
 	}
+
 	for (var i = 0; i < editLi.firstChild.childNodes.length; ++i) {
 		if (editLi.firstChild.childNodes[i].tagName === 'BR') {
 			editLi.firstChild.childNodes[i].innerHTML = '\n';
@@ -114,14 +209,27 @@ function editeMessage (event) {
     			event.preventDefault();
    			}
    			editMessageTextArea.value = editMessageTextArea.value.replace(/\r?\n/g, '<br>');
+   			var currentTime = getTime();
    			editLi.innerHTML = '<span class="currentChatText">'+
 			editMessageTextArea.value
 			+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
 			currentUserName.textContent
 			+'</span> | '+
-			getTime()
+			currentTime
 			+'</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr>';
-			scanDeleteMessage (); 
+			scanDeleteMessage ();
+
+			var messageNumber = 0;
+			while (editLi.tagName != 'LI') {
+				editLi = editLi.parentNode;
+			}
+
+			while (editLi.previousSibling.tagName === 'LI') {
+				editLi = editLi.previousSibling;
+				++messageNumber;
+			}
+			messageList[messageNumber] = storeEditMessage(messageList[messageNumber], currentTime, editMessageTextArea.value);
+			storeMessages(messageList);
 	}
 }
 
