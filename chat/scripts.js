@@ -43,7 +43,7 @@ function innerRestoredMesseges (_lastSession) {
 		if (_lastSession[i].deleted === true) {
 			chatField.innerHTML += '<li class="media"><div class="row"><div class="col-md-12 text-center"><small class="text-muted center">Message was deleted</small></div></div></li>';
 		} else if (_lastSession[i].editDelete === true){
-					chatField.innerHTML += '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="user.png"></a><div class="media-body edit"><span class="currentChatText">'+
+					chatField.innerHTML += '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="message.png"></a><div class="media-body edit"><span class="currentChatText">'+
 					_lastSession[i].message
 					+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
 					_lastSession[i].author
@@ -51,7 +51,7 @@ function innerRestoredMesseges (_lastSession) {
 					_lastSession[i].date
 					+ '</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr></div></div></div></li>';
 					} else {
-							chatField.innerHTML += '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="user.png"></a><div class="media-body edit"><span class="currentChatText">'+
+							chatField.innerHTML += '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="message.png"></a><div class="media-body edit"><span class="currentChatText">'+
 						_lastSession[i].message
 						+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
 						_lastSession[i].author
@@ -59,7 +59,9 @@ function innerRestoredMesseges (_lastSession) {
 						_lastSession[i].date
 						+ '</small><small class="text-muted pull-right editDelete"></small><hr></div></div></div></li>';
 		}
-	} 
+	}
+			var srcroll = document.getElementById('scrollDown');
+			srcroll.scrollTop = srcroll.scrollHeight; 
 }
 
 function storeSend(messageItem, _deleted, _message, _author, _date, _editDelete) {
@@ -110,30 +112,35 @@ function send (event) {
     	event.preventDefault();
    	}
 	var currentUserName = document.getElementById('currentUserName'); 	
-	var newMessageTextArea = document.getElementById('newMessageTextArea'); 
-	var chatField = document.getElementById('chatField');
-	newMessageTextArea.value = newMessageTextArea.value.replace(/\r?\n/g, '<br>');
-	var currentTime = getTime();     							
-	chatField.innerHTML += '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="user.png"></a><div class="media-body edit"><span class="currentChatText">'+
-	newMessageTextArea.value
-	+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
-	currentUserName.textContent
-	+'</span> | '+
-	currentTime
-	+'</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr></div></div></div></li>';
-	scanDeleteMessage ();
+	var newMessageTextArea = document.getElementById('newMessageTextArea');
+	if (newMessageTextArea.value !== '') {
+			var chatField = document.getElementById('chatField');
+		newMessageTextArea.value = newMessageTextArea.value.replace(/\r?\n/g, '<br>');
+		var currentTime = getTime();     							
+		chatField.innerHTML += '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="message.png"></a><div class="media-body edit"><span class="currentChatText">'+
+		newMessageTextArea.value
+		+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
+		currentUserName.textContent
+		+'</span> | '+
+		currentTime
+		+'</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr></div></div></div></li>';
+		scanDeleteMessage ();
 
-	messageList[messageCounter] = storeSend(messageList[messageCounter] ,false, newMessageTextArea.value, 
+		var srcroll = document.getElementById('scrollDown');
+		srcroll.scrollTop = srcroll.scrollHeight;
+
+		messageList[messageCounter] = storeSend(messageList[messageCounter] ,false, newMessageTextArea.value, 
 		currentUserName.textContent, currentTime, true);
-	storeMessages(messageList);
-	++messageCounter;
+		storeMessages(messageList);
+		++messageCounter;
 
-	newMessageTextArea.value = '';
+		newMessageTextArea.value = '';
+	}
 }
 
 function showEditProfile (event) {
 	var showFormEditProfile = document.getElementById('showFormEditProfile');
-	showFormEditProfile.innerHTML ='<form class="form-inline" id="formEditProfile"><div class="form-group"><input type="text" class="form-control" placeholder="Your name" id="inputEditProfile"><button type="submit" class="btn btn-info" id="buttonSubmitProfile">edit</button></div></form>'
+	showFormEditProfile.innerHTML ='<form class="form-inline" id="formEditProfile"><div class="form-group"><input type="text" class="form-control" style="height: 30px" placeholder="Your name" id="inputEditProfile"><button type="submit" class="btn btn-info" style="height: 30px" id="buttonSubmitProfile">edit</button></div></form>'
 	buttonSubmitProfile = document.getElementById('buttonSubmitProfile');
 	buttonSubmitProfile.onclick = submitEditedProfile;
 }
@@ -145,46 +152,48 @@ function submitEditedProfile (event) {
    	} 
 	currentUserName = document.getElementById('currentUserName');
 	inputEditProfile = document.getElementById('inputEditProfile');
-	formEditProfile = document.getElementById('formEditProfile');
-	currentUserName.innerHTML = inputEditProfile.value;
-	storeName(inputEditProfile.value);
-	formEditProfile.style.display = 'none';
+	if (inputEditProfile.value !== '') {
+		formEditProfile = document.getElementById('formEditProfile');
+		currentUserName.innerHTML = inputEditProfile.value;
+		storeName(inputEditProfile.value);
+		formEditProfile.style.display = 'none';
 
-	var editDeleteArray = document.getElementsByClassName('text-muted pull-right editDelete');
-	var usersArray = document.getElementsByClassName('userNameEditDelete');
-	for (var i = 0; i < usersArray.length; ++i) {
-		if (currentUserName.textContent !== usersArray[i].textContent) {
-			editDeleteArray[i].innerHTML = '';
+		var editDeleteArray = document.getElementsByClassName('text-muted pull-right editDelete');
+		var usersArray = document.getElementsByClassName('userNameEditDelete');
+		for (var i = 0; i < usersArray.length; ++i) {
+			if (currentUserName.textContent !== usersArray[i].textContent) {
+				editDeleteArray[i].innerHTML = '';
 
-			var messageNumber = 0;
-			var editLi = editDeleteArray[i];
-			while (editLi.tagName != 'LI') {
-				editLi = editLi.parentNode;
-			}
+				var messageNumber = 0;
+				var editLi = editDeleteArray[i];
+				while (editLi.tagName != 'LI') {
+					editLi = editLi.parentNode;
+				}
 
-			while (editLi.previousSibling.tagName === 'LI') {
-				editLi = editLi.previousSibling;
-				++messageNumber;
-			}
-			messageList[messageNumber] = storeSubmitEditedProfile(messageList[messageNumber], false);
-		} else if (currentUserName.textContent === usersArray[i].textContent){
-			editDeleteArray[i].innerHTML = '<a href="#">Edit</a> | <a href="#">Delete</a>';
+				while (editLi.previousSibling.tagName === 'LI') {
+					editLi = editLi.previousSibling;
+					++messageNumber;
+				}
+				messageList[messageNumber] = storeSubmitEditedProfile(messageList[messageNumber], false);
+			} else if (currentUserName.textContent === usersArray[i].textContent){
+				editDeleteArray[i].innerHTML = '<a href="#">Edit</a> | <a href="#">Delete</a>';
 			
-			var messageNumber = 0;
-			var editLi = editDeleteArray[i];
-			while (editLi.tagName != 'LI') {
-				editLi = editLi.parentNode;
-			}
+				var messageNumber = 0;
+				var editLi = editDeleteArray[i];
+				while (editLi.tagName != 'LI') {
+					editLi = editLi.parentNode;
+				}
 
-			while (editLi.previousSibling.tagName === 'LI') {
-				editLi = editLi.previousSibling;
-				++messageNumber;
+				while (editLi.previousSibling.tagName === 'LI') {
+					editLi = editLi.previousSibling;
+					++messageNumber;
+				}
+				messageList[messageNumber] = storeSubmitEditedProfile(messageList[messageNumber], true);
 			}
-			messageList[messageNumber] = storeSubmitEditedProfile(messageList[messageNumber], true);
-		}
 	}
 	storeMessages(messageList);
 	scanDeleteMessage ();
+	}
 }
 
 function scanDeleteMessage () {
