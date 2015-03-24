@@ -225,6 +225,8 @@ function deleteMessage (event) {
 }
 
 function editMessage (event) {
+	var sendButton = document.getElementById('sendButton');
+	sendButton.onclick = '';
 	var editLi = event.target;
 	while (editLi.className != 'media-body edit') {
 		editLi = editLi.parentNode;
@@ -241,11 +243,14 @@ function editMessage (event) {
 	+'</textarea><span class="input-group-btn"><button type="submit" class="btn btn-info pull-right" id="editButtonTextArea" style="height:60px">edit</button></span></div>';
 	var editMessageTextArea = document.getElementById('editMessageTextArea');
 	var editButtonTextArea = document.getElementById('editButtonTextArea');
+
 	editButtonTextArea.onclick = function (event) {
 			//will not send form (reload page), if click submit button
-			if (event.preventDefault) {
-    			event.preventDefault();
-   			}
+		if (event.preventDefault) {
+    		event.preventDefault();
+   		}
+
+   		if (editMessageTextArea.value !== '') {
    			editMessageTextArea.value = editMessageTextArea.value.replace(/\r?\n/g, '<br>');
    			var currentTime = 'Message was edited on ' + getTime();
    			editLi.innerHTML = '<span class="currentChatText">'+
@@ -268,6 +273,8 @@ function editMessage (event) {
 			}
 			messageList[messageNumber] = storeEditMessage(messageList[messageNumber], currentTime, editMessageTextArea.value);
 			storeMessages(messageList);
+		}
+		sendButton.onclick = send;
 	}
 }
 
