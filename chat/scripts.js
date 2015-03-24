@@ -140,7 +140,7 @@ function send (event) {
 
 function showEditProfile (event) {
 	var showFormEditProfile = document.getElementById('showFormEditProfile');
-	showFormEditProfile.innerHTML ='<form class="form-inline" id="formEditProfile"><div class="form-group"><input type="text" class="form-control" style="height: 30px" placeholder="Your name" id="inputEditProfile"><button type="submit" class="btn btn-info" style="height: 30px" id="buttonSubmitProfile">edit</button></div></form>'
+	showFormEditProfile.innerHTML ='<form class="form-inline" id="formEditProfile"><div class="form-group"><input type="text" class="form-control" style="height: 30px; width: 150px; display: inline" placeholder="Your name" id="inputEditProfile"><button type="submit" class="btn btn-info" style="height: 30px; display: inline" id="buttonSubmitProfile">edit</button></div></form>'
 	buttonSubmitProfile = document.getElementById('buttonSubmitProfile');
 	buttonSubmitProfile.onclick = submitEditedProfile;
 }
