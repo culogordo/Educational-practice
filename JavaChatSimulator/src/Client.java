@@ -23,7 +23,7 @@ public class Client implements Runnable {
     private static Logger logger;
 
     static {
-        new DOMConfigurator().doConfigure("logger/clientlogConfiguration.xml", LogManager.getLoggerRepository());
+        new DOMConfigurator().doConfigure("logger/clientLogConfiguration.xml", LogManager.getLoggerRepository());
         logger = Logger.getLogger(Client.class);
     }
 

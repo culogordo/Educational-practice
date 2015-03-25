@@ -1,0 +1,96 @@
+25.03.2015 19:50:02 [main] DEBUG Client  - Server is starting...
+25.03.2015 19:50:02 [main] DEBUG Client  - Server started.
+25.03.2015 19:50:02 [main] DEBUG Client  - Get list of messages: GET http://192.168.0.103:999/chat?token={token}
+25.03.2015 19:50:02 [main] DEBUG Client  - Send message: POST http://192.168.0.103:999/chat provide body json in format {"message" : "{message}"} 
+25.03.2015 19:50:05 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:05 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:06 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:06 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:07 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:07 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:08 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:08 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:09 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:09 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:10 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:10 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:11 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:11 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:11 [Thread-2] DEBUG Client  - Get Message from User : 1
+25.03.2015 19:50:11 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:11 [Thread-2] DEBUG Client  - Get Message from User : 2
+25.03.2015 19:50:11 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:11 [Thread-2] DEBUG Client  - Get Message from User : 3
+25.03.2015 19:50:11 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:12 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:12 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:12 [Thread-2] DEBUG Client  - Get Message from User : 4
+25.03.2015 19:50:12 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:12 [Thread-2] DEBUG Client  - Get Message from User : 5
+25.03.2015 19:50:12 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:13 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:13 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:14 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:14 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:15 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:15 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:16 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:16 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:17 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:17 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:18 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:18 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:19 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:19 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:20 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:20 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:21 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:21 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:22 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:22 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:23 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:23 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:24 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:24 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:25 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:25 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:26 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:26 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:27 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:27 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:28 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:28 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:29 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:29 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:30 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:30 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:31 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:31 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:32 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:32 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:33 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:33 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:34 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:34 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:35 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:35 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:36 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:36 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:37 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:37 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:38 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:38 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:39 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:39 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:40 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:40 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:41 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:41 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:42 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:42 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:43 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:43 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:44 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:44 [Thread-2] DEBUG Client  - response sent
+25.03.2015 19:50:45 [Thread-2] DEBUG Client  - processed method GET for user
+25.03.2015 19:50:45 [Thread-2] DEBUG Client  - response sent

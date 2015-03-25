@@ -1,0 +1,68 @@
+25.03.2015 19:50:05 [main] DEBUG Client  - Connection to server...
+25.03.2015 19:50:05 [main] DEBUG Client  - Connected to server: localhost:999
+25.03.2015 19:50:05 [main] DEBUG Client  - response received
+25.03.2015 19:50:06 [main] DEBUG Client  - response received
+25.03.2015 19:50:07 [main] DEBUG Client  - response received
+25.03.2015 19:50:08 [main] DEBUG Client  - response received
+25.03.2015 19:50:09 [main] DEBUG Client  - response received
+25.03.2015 19:50:10 [main] DEBUG Client  - response received
+25.03.2015 19:50:11 [main] DEBUG Client  - response received
+25.03.2015 19:50:11 [Thread-0] DEBUG Client  - request begin
+25.03.2015 19:50:11 [Thread-0] DEBUG Client  - request parameters: token=TN11EN
+25.03.2015 19:50:11 [Thread-0] DEBUG Client  - method POST
+25.03.2015 19:50:11 [Thread-0] DEBUG Client  - request end
+25.03.2015 19:50:11 [Thread-0] DEBUG Client  - request begin
+25.03.2015 19:50:11 [Thread-0] DEBUG Client  - request parameters: token=TN11EN
+25.03.2015 19:50:11 [Thread-0] DEBUG Client  - method POST
+25.03.2015 19:50:11 [Thread-0] DEBUG Client  - request end
+25.03.2015 19:50:11 [Thread-0] DEBUG Client  - request begin
+25.03.2015 19:50:11 [Thread-0] DEBUG Client  - request parameters: token=TN11EN
+25.03.2015 19:50:11 [Thread-0] DEBUG Client  - method POST
+25.03.2015 19:50:11 [Thread-0] DEBUG Client  - request end
+25.03.2015 19:50:12 [main] DEBUG Client  - response received
+25.03.2015 19:50:12 [main] DEBUG Client  - response with some Messages sent
+25.03.2015 19:50:12 [main] DEBUG Client  - response: history size=3
+25.03.2015 19:50:12 [Thread-0] DEBUG Client  - request begin
+25.03.2015 19:50:12 [Thread-0] DEBUG Client  - request parameters: token=TN35EN
+25.03.2015 19:50:12 [Thread-0] DEBUG Client  - method POST
+25.03.2015 19:50:12 [Thread-0] DEBUG Client  - request end
+25.03.2015 19:50:12 [Thread-0] DEBUG Client  - request begin
+25.03.2015 19:50:12 [Thread-0] DEBUG Client  - request parameters: token=TN35EN
+25.03.2015 19:50:12 [Thread-0] DEBUG Client  - method POST
+25.03.2015 19:50:12 [Thread-0] DEBUG Client  - request end
+25.03.2015 19:50:13 [main] DEBUG Client  - response received
+25.03.2015 19:50:13 [main] DEBUG Client  - response with some Messages sent
+25.03.2015 19:50:13 [main] DEBUG Client  - response: history size=5
+25.03.2015 19:50:14 [main] DEBUG Client  - response received
+25.03.2015 19:50:15 [main] DEBUG Client  - response received
+25.03.2015 19:50:16 [main] DEBUG Client  - response received
+25.03.2015 19:50:17 [main] DEBUG Client  - response received
+25.03.2015 19:50:18 [main] DEBUG Client  - response received
+25.03.2015 19:50:19 [main] DEBUG Client  - response received
+25.03.2015 19:50:20 [main] DEBUG Client  - response received
+25.03.2015 19:50:21 [main] DEBUG Client  - response received
+25.03.2015 19:50:22 [main] DEBUG Client  - response received
+25.03.2015 19:50:23 [main] DEBUG Client  - response received
+25.03.2015 19:50:24 [main] DEBUG Client  - response received
+25.03.2015 19:50:25 [main] DEBUG Client  - response received
+25.03.2015 19:50:26 [main] DEBUG Client  - response received
+25.03.2015 19:50:27 [main] DEBUG Client  - response received
+25.03.2015 19:50:28 [main] DEBUG Client  - response received
+25.03.2015 19:50:29 [main] DEBUG Client  - response received
+25.03.2015 19:50:30 [main] DEBUG Client  - response received
+25.03.2015 19:50:31 [main] DEBUG Client  - response received
+25.03.2015 19:50:32 [main] DEBUG Client  - response received
+25.03.2015 19:50:33 [main] DEBUG Client  - response received
+25.03.2015 19:50:34 [main] DEBUG Client  - response received
+25.03.2015 19:50:35 [main] DEBUG Client  - response received
+25.03.2015 19:50:36 [main] DEBUG Client  - response received
+25.03.2015 19:50:37 [main] DEBUG Client  - response received
+25.03.2015 19:50:38 [main] DEBUG Client  - response received
+25.03.2015 19:50:39 [main] DEBUG Client  - response received
+25.03.2015 19:50:40 [main] DEBUG Client  - response received
+25.03.2015 19:50:41 [main] DEBUG Client  - response received
+25.03.2015 19:50:42 [main] DEBUG Client  - response received
+25.03.2015 19:50:43 [main] DEBUG Client  - response received
+25.03.2015 19:50:44 [main] DEBUG Client  - response received
+25.03.2015 19:50:45 [main] DEBUG Client  - response received
+25.03.2015 19:50:47 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect

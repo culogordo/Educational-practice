@@ -23,7 +23,7 @@ public class Server implements HttpHandler {
     private static Logger logger;
 
     static {
-        new DOMConfigurator().doConfigure("logger/serverlogConfiguration.xml", LogManager.getLoggerRepository());
+        new DOMConfigurator().doConfigure("logger/serverLogConfiguration.xml", LogManager.getLoggerRepository());
         logger = Logger.getLogger(Client.class);
     }
 
