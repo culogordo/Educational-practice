@@ -114,7 +114,6 @@ function send (event) {
 	var currentUserName = document.getElementById('currentUserName'); 	
 	var newMessageTextArea = document.getElementById('newMessageTextArea');
 	var delEmptyText = newMessageTextArea.value.replace(/\r?\n?\t?\s/g, '');
-	console.log(delEmptyText);
 	if ((newMessageTextArea.value !== '') && (delEmptyText !== ''))  {
 			var chatField = document.getElementById('chatField');
 		newMessageTextArea.value = newMessageTextArea.value.replace(/\r?\n/g, '<br>');
