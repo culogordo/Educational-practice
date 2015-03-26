@@ -1,0 +1,13 @@
+POST http://localhost:999/chat HTTP/1.1
+User-Agent: Composer
+Host: localhost:999
+Content-Length: 47
+
+{"message" : "POST method in raw is working!"} 
+HTTP/1.1 200 OK
+Date: Thu, 26 Mar 2015 07:13:46 GMT
+Transfer-encoding: chunked
+Access-control-allow-origin: *
+
+0
+
