@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 public class Client implements Runnable {
 
-    private List<String> history = new ArrayList<String>();
+    private List<Message> history = new ArrayList<Message>();
     private MessageExchange messageExchange = new MessageExchange();
     private String host;
     private Integer port;
@@ -56,20 +56,19 @@ public class Client implements Runnable {
         return (HttpURLConnection) url.openConnection();
     }
 
-    public List<String> getMessages() {
-        List<String> list = new ArrayList<String>();
+    public List<Message> getMessages() {
+        List<Message> list = new ArrayList<Message>();
         HttpURLConnection connection = null;
-            try {
+        try {
             connection = getHttpURLConnection();
             connection.connect();
             String response = messageExchange.inputStreamToString(connection.getInputStream());
             JSONObject jsonObject = messageExchange.getJSONObject(response);
-            JSONArray jsonArray = (JSONArray) jsonObject.get("messages");
+            JSONArray jsonArray = (JSONArray) jsonObject.get("message");
             for (Object o : jsonArray) {
                 System.out.println(o);
-                list.add(o.toString());
+                list.add(messageExchange.getMessageFromJSONObject((JSONObject) o));
             }
-            logger.debug("response received");
         } catch (IOException e) {
             System.err.println("ERROR: " + e.getMessage());
             logger.error(e);
@@ -84,7 +83,7 @@ public class Client implements Runnable {
         return list;
     }
 
-    public void sendMessage(String message) {
+    public void sendMessage(Message message) {
         HttpURLConnection connection = null;
         try {
             logger.debug("request begin");
@@ -113,18 +112,18 @@ public class Client implements Runnable {
             }
             logger.debug("request end");
         }
-
     }
 
     public void listen() {
         while (true) {
-            List<String> list = getMessages();
+            List<Message> list = getMessages();
 
             if (list.size() > 0) {
                 logger.debug("response with some Messages sent");
                 history.addAll(list);
                 logger.debug("response: history size=" + history.size());
             }
+
 
             try {
                 Thread.sleep(1000);
@@ -140,7 +139,15 @@ public class Client implements Runnable {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            String message = scanner.nextLine();
+            Message message = new Message();
+            message.setMessage(scanner.nextLine());
+            /*this.id = id;
+            this.author = author;
+            this.message = message;
+            */
+            message.setDeleted(false);
+            //this.date = date;
+            message.setEditDelete(true);
             sendMessage(message);
         }
     }

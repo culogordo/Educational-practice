@@ -17,14 +17,14 @@ import java.util.List;
 import java.util.Map;
 
 public class Server implements HttpHandler {
-    private List<String> history = new ArrayList<String>();
+    private List<Message> history = new ArrayList<Message>();
     private MessageExchange messageExchange = new MessageExchange();
 
     private static Logger logger;
 
     static {
         new DOMConfigurator().doConfigure("logger/serverLogConfiguration.xml", LogManager.getLoggerRepository());
-        logger = Logger.getLogger(Client.class);
+        logger = Logger.getLogger(Server.class);
     }
 
     public static void main(String[] args) {
@@ -90,9 +90,11 @@ public class Server implements HttpHandler {
 
     private void doPost(HttpExchange httpExchange) {
         try {
-            String message = messageExchange.getClientMessage(httpExchange.getRequestBody());
+            logger.debug("In post");
+            Message message = messageExchange.getClientMessage(httpExchange.getRequestBody());
+            logger.debug(message);
             System.out.println("Get Message from User : " + message);
-            logger.debug("Get Message from User : " + message);
+            logger.debug("Get Message from User : " + message.toString());
             history.add(message);
         } catch (ParseException e) {
             System.err.println("Invalid user message: " + httpExchange.getRequestBody() + " " + e.getMessage());
@@ -113,7 +115,6 @@ public class Server implements HttpHandler {
             logger.debug("response sent");
         } catch (IOException e) {
             e.printStackTrace();
-            logger.error(e);
         }
     }
 

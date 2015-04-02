@@ -18,42 +18,41 @@ public class MessageExchange {
         return (Integer.valueOf(token.substring(2, token.length() - 2)) - 11) / 8;
     }
 
-    //добавляем объект через public1
-    //т.е. будет List<"класс объект">
-    //{
-    //    "messages":[
-    //    {"id":"1", "user":"User 1", "message":"Hi !"},
-    //    {"id":"2", "user":"User 2", "message":"What’s up ?"},
-    //    {"id":"3", "user":"User 1", "message":"I’m fine, and you ?"},
-    //    {"id":"4", "user":"User 2", "message":"Me too"}
-    //    ],
-    //    "token":"TN43EN"
-    //}
-
-    public String getServerResponse(List<String> messages) {
+    public String getServerResponse(List<Message> messages) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("messages", messages);
+        jsonObject.put("message", messages);
         jsonObject.put("token", getToken(messages.size()));
         return jsonObject.toJSONString();
     }
 
-    public String getClientSendMessageRequest(String message) {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("message", message);
-        return jsonObject.toJSONString();
+    public String getClientSendMessageRequest(Message message) {
+        //JSONObject jsonObject = new JSONObject();
+        //jsonObject.put("message", message);
+        //return jsonObject.toJSONString();
+        return message.toString();
     }
 
-    public String getClientMessage(InputStream inputStream) throws ParseException {
-        return (String) getJSONObject(inputStreamToString(inputStream)).get("message");
+    public Message getClientMessage(InputStream inputStream) throws ParseException {
+        //return (String) getJSONObject(inputStreamToString(inputStream)).get("message");
+        JSONObject json = getJSONObject(inputStreamToString(inputStream));
+        return getMessageFromJSONObject(json);
     }
 
     public JSONObject getJSONObject(String json) throws ParseException {
         return (JSONObject) jsonParser.parse(json.trim());
     }
 
+    public Message getMessageFromJSONObject(JSONObject json) {
+        Boolean deleted = Boolean.valueOf((String) json.get("deleted"));
+        Boolean editDelete = Boolean.valueOf((String) json.get("editDelete"));
+        Message message = new Message((String)json.get("id"), (String)json.get("author"), (String)json.get("message"),
+                deleted, (String)json.get("date"), editDelete);
+        return message;
+    }
+
     public String inputStreamToString(InputStream in) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[2048];
         int length = 0;
         try {
             while ((length = in.read(buffer)) != -1) {
