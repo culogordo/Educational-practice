@@ -1,0 +1,106 @@
+03.04.2015 00:21:22 [main] DEBUG Client  - Connection to server...
+03.04.2015 00:21:22 [main] DEBUG Client  - Connected to server: localhost:999
+03.04.2015 00:21:26 [Thread-0] DEBUG Client  - request begin
+03.04.2015 00:21:26 [Thread-0] DEBUG Client  - request parameters: token=TN11EN
+03.04.2015 00:21:26 [Thread-0] DEBUG Client  - method POST
+03.04.2015 00:21:26 [Thread-0] DEBUG Client  - request end
+03.04.2015 00:21:27 [main] DEBUG Client  - response with some Messages sent
+03.04.2015 00:21:27 [main] DEBUG Client  - response: history size=1
+03.04.2015 00:23:08 [main] DEBUG Client  - response with some Messages sent
+03.04.2015 00:23:08 [main] DEBUG Client  - response: history size=2
+03.04.2015 14:45:54 [main] DEBUG Client  - Connection to server...
+03.04.2015 14:45:54 [main] DEBUG Client  - Connected to server: localhost:999
+03.04.2015 14:49:23 [Thread-0] DEBUG Client  - request begin
+03.04.2015 14:49:23 [Thread-0] DEBUG Client  - request parameters: token=TN11EN
+03.04.2015 14:49:23 [Thread-0] DEBUG Client  - method POST
+03.04.2015 14:49:23 [Thread-0] DEBUG Client  - request end
+03.04.2015 14:49:24 [main] DEBUG Client  - response with some Messages sent
+03.04.2015 14:49:24 [main] DEBUG Client  - response: history size=1
+03.04.2015 14:51:44 [main] DEBUG Client  - Connection to server...
+03.04.2015 14:51:44 [main] DEBUG Client  - Connected to server: localhost:999
+03.04.2015 14:52:11 [Thread-0] DEBUG Client  - request begin
+03.04.2015 14:52:11 [Thread-0] DEBUG Client  - request parameters: token=TN11EN
+03.04.2015 14:52:11 [Thread-0] DEBUG Client  - method POST
+03.04.2015 14:52:11 [Thread-0] DEBUG Client  - request end
+03.04.2015 14:52:12 [main] DEBUG Client  - response with some Messages sent
+03.04.2015 14:52:12 [main] DEBUG Client  - response: history size=1
+03.04.2015 14:53:31 [Thread-0] DEBUG Client  - request begin
+03.04.2015 14:53:31 [Thread-0] DEBUG Client  - request parameters: token=TN19EN
+03.04.2015 14:53:31 [Thread-0] DEBUG Client  - method POST
+03.04.2015 14:53:31 [Thread-0] DEBUG Client  - request end
+03.04.2015 14:53:32 [main] DEBUG Client  - response with some Messages sent
+03.04.2015 14:53:32 [main] DEBUG Client  - response: history size=2
+03.04.2015 15:06:15 [main] DEBUG Client  - Connection to server...
+03.04.2015 15:06:15 [main] DEBUG Client  - Connected to server: localhost:999
+03.04.2015 15:06:41 [main] DEBUG Client  - Connection to server...
+03.04.2015 15:06:41 [main] DEBUG Client  - Connected to server: localhost:999
+03.04.2015 15:07:26 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:07:33 [main] DEBUG Client  - Connection to server...
+03.04.2015 15:07:33 [main] DEBUG Client  - Connected to server: localhost:999
+03.04.2015 15:07:35 [Thread-0] DEBUG Client  - request begin
+03.04.2015 15:07:35 [Thread-0] DEBUG Client  - request parameters: token=TN11EN
+03.04.2015 15:07:35 [Thread-0] DEBUG Client  - method POST
+03.04.2015 15:07:35 [Thread-0] DEBUG Client  - request end
+03.04.2015 15:07:35 [main] DEBUG Client  - response with some Messages sent
+03.04.2015 15:07:35 [main] DEBUG Client  - response: history size=1
+03.04.2015 15:07:52 [main] DEBUG Client  - Connection to server...
+03.04.2015 15:07:52 [main] DEBUG Client  - Connected to server: localhost:999
+03.04.2015 15:08:32 [main] DEBUG Client  - response with some Messages sent
+03.04.2015 15:08:32 [main] DEBUG Client  - response: history size=1
+03.04.2015 15:10:09 [main] DEBUG Client  - Connection to server...
+03.04.2015 15:10:09 [main] DEBUG Client  - Connected to server: localhost:999
+03.04.2015 15:10:36 [main] DEBUG Client  - response with some Messages sent
+03.04.2015 15:10:36 [main] DEBUG Client  - response: history size=1
+03.04.2015 15:28:24 [main] DEBUG Client  - Connection to server...
+03.04.2015 15:28:24 [main] DEBUG Client  - Connected to server: localhost:999
+03.04.2015 15:28:26 [Thread-0] DEBUG Client  - request begin
+03.04.2015 15:28:26 [Thread-0] DEBUG Client  - request parameters: token=TN11EN
+03.04.2015 15:28:26 [Thread-0] DEBUG Client  - method POST
+03.04.2015 15:28:26 [Thread-0] DEBUG Client  - request end
+03.04.2015 15:28:26 [main] DEBUG Client  - response with some Messages sent
+03.04.2015 15:28:26 [main] DEBUG Client  - response: history size=1
+03.04.2015 15:33:47 [main] DEBUG Client  - Connection to server...
+03.04.2015 15:33:47 [main] DEBUG Client  - Connected to server: localhost:999
+03.04.2015 15:33:49 [Thread-0] DEBUG Client  - request begin
+03.04.2015 15:33:49 [Thread-0] DEBUG Client  - request parameters: token=TN11EN
+03.04.2015 15:33:49 [Thread-0] DEBUG Client  - method POST
+03.04.2015 15:33:49 [Thread-0] DEBUG Client  - request end
+03.04.2015 15:33:49 [main] DEBUG Client  - response with some Messages sent
+03.04.2015 15:33:49 [main] DEBUG Client  - response: history size=1
+03.04.2015 15:33:51 [Thread-0] DEBUG Client  - request begin
+03.04.2015 15:33:51 [Thread-0] DEBUG Client  - request parameters: token=TN19EN
+03.04.2015 15:33:51 [Thread-0] DEBUG Client  - method POST
+03.04.2015 15:33:51 [Thread-0] DEBUG Client  - request end
+03.04.2015 15:33:51 [main] DEBUG Client  - response with some Messages sent
+03.04.2015 15:33:51 [main] DEBUG Client  - response: history size=2
+03.04.2015 15:33:55 [Thread-0] DEBUG Client  - request begin
+03.04.2015 15:33:55 [Thread-0] DEBUG Client  - request parameters: token=TN27EN
+03.04.2015 15:33:55 [Thread-0] DEBUG Client  - method POST
+03.04.2015 15:33:55 [Thread-0] DEBUG Client  - request end
+03.04.2015 15:33:56 [main] DEBUG Client  - response with some Messages sent
+03.04.2015 15:33:56 [main] DEBUG Client  - response: history size=3
+03.04.2015 15:36:02 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:04 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:06 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:08 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:10 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:12 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:14 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:16 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:18 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:20 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:22 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:24 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:26 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:28 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:30 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:32 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:34 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:36 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:38 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:40 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:42 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:44 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:46 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:48 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect
+03.04.2015 15:36:50 [main] ERROR Client  - java.net.ConnectException: Connection refused: connect

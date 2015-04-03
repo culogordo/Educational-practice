@@ -38,6 +38,12 @@ public class MessageExchange {
         return getMessageFromJSONObject(json);
     }
 
+    public String getClientMessageToDeleteId(InputStream inputStream) throws ParseException {
+        JSONObject json = getJSONObject(inputStreamToString(inputStream));
+        String messageToDeleteId = new String((String)json.get("id"));
+        return messageToDeleteId;
+    }
+
     public JSONObject getJSONObject(String json) throws ParseException {
         return (JSONObject) jsonParser.parse(json.trim());
     }

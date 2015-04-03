@@ -63,6 +63,10 @@ public class Server implements HttpHandler {
             response = doGet(httpExchange);
         } else if ("POST".equals(httpExchange.getRequestMethod())) {
             doPost(httpExchange);
+        } else if (("DELETE".equals(httpExchange.getRequestMethod()))) {
+            doDelete(httpExchange);
+        } else if (("PUT".equals(httpExchange.getRequestMethod()))) {
+            doPut(httpExchange);
         } else {
             response = "Unsupported http method: " + httpExchange.getRequestMethod();
         }
@@ -100,6 +104,27 @@ public class Server implements HttpHandler {
             System.err.println("Invalid user message: " + httpExchange.getRequestBody() + " " + e.getMessage());
             logger.error(e);
         }
+    }
+
+    private void doDelete(HttpExchange httpExchange) {
+        try {
+            logger.debug("In delete");
+            String messageToDeleteId  = messageExchange.getClientMessageToDeleteId(httpExchange.getRequestBody());
+            logger.debug(messageToDeleteId);
+            System.out.println("Get messageToDeleteId from User : " + messageToDeleteId);
+            logger.debug("Get messageToDeleteId from User : " + messageToDeleteId);
+            int deleteIndex = Integer.parseInt(messageToDeleteId);
+            Message deleteMessage = history.get(deleteIndex);
+            deleteMessage.setDeleted(true);
+            history.set(deleteIndex, deleteMessage);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            logger.error(e);
+        }
+    }
+
+    private void doPut(HttpExchange httpExchange) {
+
     }
 
     private void sendResponse(HttpExchange httpExchange, String response) {
