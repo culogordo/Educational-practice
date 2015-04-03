@@ -1,4 +1,4 @@
-class Message {
+public class Message {
     private String id;
     private String author;
     private String message;

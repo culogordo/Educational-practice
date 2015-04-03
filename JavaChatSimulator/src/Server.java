@@ -94,11 +94,10 @@ public class Server implements HttpHandler {
 
     private void doPost(HttpExchange httpExchange) {
         try {
-            logger.debug("In post");
+            logger.debug("In POST");
             Message message = messageExchange.getClientMessage(httpExchange.getRequestBody());
-            logger.debug(message);
             System.out.println("Get Message from User : " + message);
-            logger.debug("Get Message from User : " + message.toString());
+            logger.debug("Get Message from User : " + message);
             history.add(message);
         } catch (ParseException e) {
             System.err.println("Invalid user message: " + httpExchange.getRequestBody() + " " + e.getMessage());
@@ -108,9 +107,8 @@ public class Server implements HttpHandler {
 
     private void doDelete(HttpExchange httpExchange) {
         try {
-            logger.debug("In delete");
+            logger.debug("In DELETE");
             String messageToDeleteId  = messageExchange.getClientMessageToDeleteId(httpExchange.getRequestBody());
-            logger.debug(messageToDeleteId);
             System.out.println("Get messageToDeleteId from User : " + messageToDeleteId);
             logger.debug("Get messageToDeleteId from User : " + messageToDeleteId);
             int deleteIndex = Integer.parseInt(messageToDeleteId);
@@ -124,7 +122,20 @@ public class Server implements HttpHandler {
     }
 
     private void doPut(HttpExchange httpExchange) {
-
+        try {
+            logger.debug("In PUT");
+            PUTrequest putRequest  = messageExchange.getClientMessageToEdit(httpExchange.getRequestBody());
+            System.out.println("Get messageToDeleteId from User : " + putRequest);
+            logger.debug("Get messageToDeleteId from User : " + putRequest);
+            int editIndex = Integer.parseInt(putRequest.getId());
+            String newMessage = putRequest.getMessage();
+            Message editMessage = history.get(editIndex);
+            editMessage.setMessage(newMessage);
+            history.set(editIndex, editMessage);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            logger.error(e);
+        }
     }
 
     private void sendResponse(HttpExchange httpExchange, String response) {

@@ -44,6 +44,12 @@ public class MessageExchange {
         return messageToDeleteId;
     }
 
+    public PUTrequest getClientMessageToEdit(InputStream inputStream) throws ParseException {
+        JSONObject json = getJSONObject(inputStreamToString(inputStream));
+        PUTrequest putRequest = new PUTrequest((String)json.get("id"), (String)json.get("message"));
+        return putRequest;
+    }
+
     public JSONObject getJSONObject(String json) throws ParseException {
         return (JSONObject) jsonParser.parse(json.trim());
     }
