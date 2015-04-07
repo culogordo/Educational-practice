@@ -4,6 +4,8 @@ var interval = null;
 var mainUrl = 'http://localhost:999/chat';
 var token = 'TN11EN';
 var messageCounter = 0;
+var deletedMessages;
+var editMessages;
 
 
 var run = function () {
@@ -15,7 +17,7 @@ var run = function () {
 		buttonEditProfile.onclick = showEditProfile;
 }();
 
-var interval = setInterval("restoreMessages()", 1000);
+var interval = setInterval("restoreMessages()", 500);
 
 function storeName(nameToSave) {
 	var stringToSave = JSON.stringify(nameToSave);
@@ -31,7 +33,6 @@ function restoreName() {
 		return;
 	}
 	var item = localStorage.getItem("Previos name");
-	//console.log(item.concat(uniqueId()));
 	if (item) return JSON.parse(item);
 	else return item;
 	//return item && JSON.parse(item); 
@@ -106,12 +107,60 @@ function uniqueId () {
 }
 
 function restoreMessages (continueWith) {
+
 	var url = mainUrl + '?token=' + token;
 	get(url, function(responseText) {
 		console.assert(responseText != null);
 		var response = JSON.parse(responseText);
 		token = response.token;
 		messageListFromServer = response.message;
+		deletedMessages = response.deletedMessages;
+		editMessages = response.editMessages;
+
+		
+		for (var i = 0; i < messageList.length; ++i) {
+			for (var j = 0; j < editMessages.length; ++j) {
+				if (messageList[i].id === editMessages[j].id && messageList[i].message !== editMessages[j].message) {
+					var k = 0;
+					var editLi = document.getElementById('chatField').firstChild.nextSibling;
+					while (k !== i) {
+						editLi = editLi.nextSibling;
+						++k;
+					}
+
+					editLi = editLi.getElementsByClassName('media-body edit')[0];
+					editMessages[j].message = editMessages[j].message.replace(/\r?\n/g, '<br>');
+   					var currentTime = 'Message was edited on ' + getTime();
+   					editLi.innerHTML = '<span class="currentChatText">'+
+					editMessages[j].message
+					+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
+					currentUserName.textContent
+					+'</span> | '+
+					currentTime
+					+'</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr>';
+					scanDeleteMessage ();
+					messageList[i] = storeEditMessage(messageList[i], currentTime, editMessages[j].message);
+				}
+			}
+		}
+
+
+		for (var i = 0; i < messageList.length; ++i) {
+			for (var j = 0; j < deletedMessages.length; ++j) {
+				if (messageList[i].id === deletedMessages[j] && messageList[i].deleted === 'false') {
+					var k = 0;
+					var del = document.getElementById('chatField').firstChild.nextSibling;
+					while (k !== i) {
+						del = del.nextSibling;
+						++k;
+					}
+					del.innerHTML = '<div class="row"><div class="col-md-12 text-center"><small class="text-muted center">Message was deleted</small></div></div>';
+					messageList[i] = storeDeleteMessage(messageList[i], true);
+				}
+			}
+		}
+
+
 
 		for (var i = 0; i < messageListFromServer.length; ++i) {
 			messageList[messageCounter] = messageListFromServer[i];
@@ -316,8 +365,6 @@ function deleteMessage (event) {
 		deleteLi = deleteLi.parentNode;
 	}
 
-	deleteLi.innerHTML = '<div class="row"><div class="col-md-12 text-center"><small class="text-muted center">Message was deleted</small></div></div>';
-
 	var messageNumber = 0;
 	while (deleteLi.previousSibling.tagName === 'LI') {
 		deleteLi = deleteLi.previousSibling;
@@ -326,10 +373,9 @@ function deleteMessage (event) {
 
 	var messageItem = {};
 	messageItem.id = messageList[messageNumber].id;
-	messageList[messageNumber] = storeDeleteMessage(messageList[messageNumber], true);
 
 	delete_(mainUrl, JSON.stringify(messageItem), function(){
-
+		restoreMessages();
 	});
 }
 
@@ -360,16 +406,6 @@ function editMessage (event) {
    		}
 
    		if (editMessageTextArea.value !== '') {
-   			editMessageTextArea.value = editMessageTextArea.value.replace(/\r?\n/g, '<br>');
-   			var currentTime = 'Message was edited on ' + getTime();
-   			editLi.innerHTML = '<span class="currentChatText">'+
-			editMessageTextArea.value
-			+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
-			currentUserName.textContent
-			+'</span> | '+
-			currentTime
-			+'</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr>';
-			scanDeleteMessage ();
 
 			var messageNumber = 0;
 			while (editLi.tagName != 'LI') {
@@ -380,9 +416,16 @@ function editMessage (event) {
 				editLi = editLi.previousSibling;
 				++messageNumber;
 			}
-			messageList[messageNumber] = storeEditMessage(messageList[messageNumber], currentTime, editMessageTextArea.value);
-			storeMessages(messageList);
+
+			var messageItem = {};
+			messageItem.id = messageList[messageNumber].id;
+			messageItem.message = editMessageTextArea.value;
+
+			put(mainUrl, JSON.stringify(messageItem), function() {
+				restoreMessages();
+			});
 		}
+
 		sendButton.onclick = send;
 	}
 }

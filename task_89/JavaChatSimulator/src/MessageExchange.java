@@ -18,10 +18,13 @@ public class MessageExchange {
         return (Integer.valueOf(token.substring(2, token.length() - 2)) - 11) / 8;
     }
 
-    public String getServerResponse(List<Message> messages, int index) {
+    public String getServerResponse(List<Message> messages, int index, List<String> idDeleted, List<PUTrequest> editMessages) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("message", messages);
         jsonObject.put("token", getToken(index));
+        jsonObject.put("deletedMessages", idDeleted);
+        jsonObject.put("editMessages", editMessages);
+
         //System.out.println(getToken(messages.size()));
         return jsonObject.toJSONString();
     }

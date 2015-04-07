@@ -18,6 +18,9 @@ import java.util.Map;
 
 public class Server implements HttpHandler {
     private List<Message> history = new ArrayList<Message>();
+    private List<PUTrequest> editMessages = new ArrayList<PUTrequest>();
+    private List<String> deletedMessages = new ArrayList<String>();
+
     private MessageExchange messageExchange = new MessageExchange();
 
     private static Logger logger;
@@ -84,7 +87,7 @@ public class Server implements HttpHandler {
             if (token != null && !"".equals(token)) {
                 int index = messageExchange.getIndex(token);
                 logger.debug("processed method GET for user");
-                return messageExchange.getServerResponse(history.subList(index, history.size()), history.size());
+                return messageExchange.getServerResponse(history.subList(index, history.size()), history.size(), deletedMessages, editMessages);
             } else {
                 logger.debug("Token query parameter is absent in url: " + query);
                 return "Token query parameter is absent in url: " + query;
@@ -115,6 +118,7 @@ public class Server implements HttpHandler {
             System.out.println("Get messageToDeleteId from User : " + messageToDeleteId);
             logger.debug("Get messageToDeleteId from User : " + messageToDeleteId);
             int deleteIndex = 0;
+            deletedMessages.add(messageToDeleteId);
             for (int i = 0; i < history.size(); ++i) {
                 if (history.get(i).getId().equals(messageToDeleteId)) {
                     deleteIndex = i;
@@ -133,13 +137,21 @@ public class Server implements HttpHandler {
         try {
             logger.debug("In PUT");
             PUTrequest putRequest  = messageExchange.getClientMessageToEdit(httpExchange.getRequestBody());
-            System.out.println("Get messageToDeleteId from User : " + putRequest);
-            logger.debug("Get messageToDeleteId from User : " + putRequest);
-            int editIndex = Integer.parseInt(putRequest.getId());
-            String newMessage = putRequest.getMessage();
+            System.out.println(putRequest);
+            System.out.println("Get messageToEdit from User : " + putRequest);
+            logger.debug("Get messageToEdit from User : " + putRequest);
+
+            int editIndex = 0;
+            editMessages.add(putRequest);
+            for (int i = 0; i < history.size(); ++i) {
+                if (history.get(i).getId().equals(putRequest.getId())) {
+                    editIndex = i;
+                }
+            }
             Message editMessage = history.get(editIndex);
-            editMessage.setMessage(newMessage);
+            editMessage.setMessage(putRequest.getMessage());
             history.set(editIndex, editMessage);
+            System.out.println(editMessages);
         } catch (ParseException e) {
             e.printStackTrace();
             logger.error(e);
