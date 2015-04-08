@@ -18,42 +18,16 @@ public class MessageExchange {
         return (Integer.valueOf(token.substring(2, token.length() - 2)) - 11) / 8;
     }
 
-    public String getServerResponse(List<Message> messages, int index, List<String> idDeleted, List<PUTrequest> editMessages) {
+    public String getServerResponse(List<Message> messages, int index) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("message", messages);
         jsonObject.put("token", getToken(index));
-        jsonObject.put("deletedMessages", idDeleted);
-        jsonObject.put("editMessages", editMessages);
-
-        //System.out.println(getToken(messages.size()));
         return jsonObject.toJSONString();
     }
 
-    public String getClientSendMessageRequest(Message message) {
-        //JSONObject jsonObject = new JSONObject();
-        //jsonObject.put("message", message);
-        //return jsonObject.toJSONString();
-        return message.toString();
-    }
-
     public Message getClientMessage(InputStream inputStream) throws ParseException {
-        //return (String) getJSONObject(inputStreamToString(inputStream)).get("message");
-
         JSONObject json = getJSONObject(inputStreamToString(inputStream));
-        //System.out.println(json);
         return getMessageFromJSONObject(json);
-    }
-
-    public String getClientMessageToDeleteId(InputStream inputStream) throws ParseException {
-        JSONObject json = getJSONObject(inputStreamToString(inputStream));
-        String messageToDeleteId = new String((String)json.get("id"));
-        return messageToDeleteId;
-    }
-
-    public PUTrequest getClientMessageToEdit(InputStream inputStream) throws ParseException {
-        JSONObject json = getJSONObject(inputStreamToString(inputStream));
-        PUTrequest putRequest = new PUTrequest((String)json.get("id"), (String)json.get("message"));
-        return putRequest;
     }
 
     public JSONObject getJSONObject(String json) throws ParseException {
@@ -61,15 +35,10 @@ public class MessageExchange {
     }
 
     public Message getMessageFromJSONObject(JSONObject json) {
-        System.out.println("sd");
-
         Boolean deleted = (Boolean) json.get("deleted");
         Boolean editDelete = (Boolean) json.get("editDelete");
-        //Boolean deleted = Boolean.valueOf((String) json.get("deleted"));
-        //System.out.println(deleted);
-        //Boolean editDelete = Boolean.valueOf((String) json.get("editDelete"));
         Message message = new Message((String)json.get("id"), (String)json.get("author"), (String)json.get("message"),
-                deleted, (String)json.get("date"), editDelete);
+                deleted, (String)json.get("date"), editDelete, (String)json.get("methodRequest"));
         System.out.println(message);
         return message;
     }

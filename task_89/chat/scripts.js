@@ -1,69 +1,57 @@
-var messageListFromServer = [];
+'use strict'
+
 var messageList = [];
 var interval = null;
 var mainUrl = 'http://localhost:999/chat';
 var token = 'TN11EN';
 var messageCounter = 0;
-var deletedMessages;
-var editMessages;
 
 
 var run = function () {
 	var currentUserName = document.getElementById('currentUserName');
-		currentUserName.textContent = restoreAnotherName() || 'Your name';
+		currentUserName.textContent = 'Enter your name';
 	var sendButton = document.getElementById('sendButton');
 		sendButton.onclick = send;
 	var buttonEditProfile = document.getElementById('buttonEditProfile');
 		buttonEditProfile.onclick = showEditProfile;
 }();
 
-var interval = setInterval("restoreMessages()", 500);
+var interval = setInterval("getServerResponse()", 500);
 
-function storeName(nameToSave) {
+function storeName (nameToSave) {
 	var stringToSave = JSON.stringify(nameToSave);
 	localStorage.setItem("Previos name", stringToSave); 
 }
 
-function restoreAnotherName () {
-	return (restoreName() + uniqueId());
-}
-
-function restoreName() {
-	if(typeof(Storage) == "undefined") {
+function restoreName () {
+	if(typeof(Storage).toString === "undefined") {
 		return;
 	}
 	var item = localStorage.getItem("Previos name");
-	if (item) return JSON.parse(item);
-	else return item;
-	//return item && JSON.parse(item); 
+	return item && JSON.parse(item); 
 }
 
-// send() ------------------ deleted, message, author, date, editDelete
-// editMessage() ---------- date, message 
-// submitEditedProfile() --- editDelete
-// deleteMessage() --------- deleted
-
-function innerRestoredMesseges (_lastSession) {
+function innerRestoredMesseges (_newMessageListFromServer) {
 	var chatField = document.getElementById('chatField');
-	var size = _lastSession.length;
+	var size = _newMessageListFromServer.length;
 	for (var i = 0; i < size; ++i) {
-		if (_lastSession[i].deleted === 'true') {
+		if (_newMessageListFromServer[i].deleted === true) {
 			chatField.innerHTML += '<li class="media"><div class="row"><div class="col-md-12 text-center"><small class="text-muted center">Message was deleted</small></div></div></li>';
-		} else if (_lastSession[i].editDelete === 'true'){
+		} else if (_newMessageListFromServer[i].editDelete === true){
 					chatField.innerHTML += '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="message.png"></a><div class="media-body edit"><span class="currentChatText">'+
-					_lastSession[i].message
+					_newMessageListFromServer[i].message
 					+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
-					_lastSession[i].author
+					_newMessageListFromServer[i].author
 					+'</span> | '+
-					_lastSession[i].date
+					_newMessageListFromServer[i].date
 					+ '</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr></div></div></div></li>';
 		} else {
 				chatField.innerHTML += '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="message.png"></a><div class="media-body edit"><span class="currentChatText">'+
-				_lastSession[i].message
+				_newMessageListFromServer[i].message
 				+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
-				_lastSession[i].author
+				_newMessageListFromServer[i].author
 				+'</span> | '+
-				_lastSession[i].date
+				_newMessageListFromServer[i].date
 				+ '</small><small class="text-muted pull-right editDelete"></small><hr></div></div></div></li>';
 		}
 	}
@@ -71,107 +59,93 @@ function innerRestoredMesseges (_lastSession) {
 	srcroll.scrollTop = srcroll.scrollHeight; 
 }
 
-function storeSend(messageItem, _deleted, _message, _author, _date, _editDelete, _id) {
-	messageItem = {
-		deleted: _deleted,
-		message: _message,
- 		author:  _author,
- 		date: _date,
- 		editDelete:  _editDelete,
- 		id: _id
-	};
-	return messageItem;
-}
-
-function storeEditMessage (messageItem, _date, _message) {
-	messageItem.message = _message;
-	messageItem.date = _date;
-	return messageItem;
-}
-
-function storeSubmitEditedProfile (messageItem, _editDelete) {
-	messageItem.editDelete = _editDelete;
-	return messageItem;
-}
-
-function storeDeleteMessage (messageItem, _deleted) {
-	messageItem.deleted = _deleted;
-	return messageItem;
-}
-
-function uniqueId () {
-	var date = Date.now();
-	var random = Math.random() * Math.random();
-
-	return Math.floor(date * random).toString();
-}
-
-function restoreMessages (continueWith) {
-
-	var url = mainUrl + '?token=' + token;
-	get(url, function(responseText) {
-		console.assert(responseText != null);
-		var response = JSON.parse(responseText);
-		token = response.token;
-		messageListFromServer = response.message;
-		deletedMessages = response.deletedMessages;
-		editMessages = response.editMessages;
-
-		
-		for (var i = 0; i < messageList.length; ++i) {
-			for (var j = 0; j < editMessages.length; ++j) {
-				if (messageList[i].id === editMessages[j].id && messageList[i].message !== editMessages[j].message) {
-					var k = 0;
-					var editLi = document.getElementById('chatField').firstChild.nextSibling;
-					while (k !== i) {
-						editLi = editLi.nextSibling;
-						++k;
-					}
-
-					editLi = editLi.getElementsByClassName('media-body edit')[0];
-					editMessages[j].message = editMessages[j].message.replace(/\r?\n/g, '<br>');
-   					var currentTime = 'Message was edited on ' + getTime();
-   					editLi.innerHTML = '<span class="currentChatText">'+
-					editMessages[j].message
-					+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
-					currentUserName.textContent
-					+'</span> | '+
-					currentTime
-					+'</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr>';
-					scanDeleteMessage ();
-					messageList[i] = storeEditMessage(messageList[i], currentTime, editMessages[j].message);
-				}
-			}
-		}
-
-
-		for (var i = 0; i < messageList.length; ++i) {
-			for (var j = 0; j < deletedMessages.length; ++j) {
-				if (messageList[i].id === deletedMessages[j] && messageList[i].deleted === 'false') {
-					var k = 0;
-					var del = document.getElementById('chatField').firstChild.nextSibling;
-					while (k !== i) {
-						del = del.nextSibling;
-						++k;
-					}
-					del.innerHTML = '<div class="row"><div class="col-md-12 text-center"><small class="text-muted center">Message was deleted</small></div></div>';
-					messageList[i] = storeDeleteMessage(messageList[i], true);
-				}
-			}
-		}
-
-
-
-		for (var i = 0; i < messageListFromServer.length; ++i) {
+function getAllHistoryFromServer (_firstResponseFromServer) {
+	var messageListFromServer = [];
+	token = _firstResponseFromServer.token;
+	messageListFromServer = _firstResponseFromServer.message;
+	for (var i = 0; i < messageListFromServer.length; ++i) {
+		if (messageListFromServer[i].methodRequest === 'POST') {
 			messageList[messageCounter] = messageListFromServer[i];
+			if (messageList[messageCounter].deleted === 'false') {
+				messageList[messageCounter].deleted = false;
+			}
 			++messageCounter;
 		}
+	}
+}
 
-		var lastSession = messageListFromServer;
-		if (lastSession.length !== 0) {
-			messageListFromServer = lastSession;
-			innerRestoredMesseges(lastSession);	
-			editDeleteChange ();
+function changeItemMessageListPUT (PUTmessage) {
+	for (var i = 0; i < messageList.length; ++i) {
+		if (messageList[i].id === PUTmessage.id) {
+			var k = 0;
+			var editLi = document.getElementById('chatField').firstChild.nextSibling;
+			while (k !== i) {
+				editLi = editLi.nextSibling;
+				++k;
+			}
+
+			editLi = editLi.getElementsByClassName('media-body edit')[0];
+			PUTmessage.message = PUTmessage.message.replace(/\r?\n/g, '<br>');
+   			editLi.innerHTML = '<span class="currentChatText">'+
+			PUTmessage.message
+			+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
+			currentUserName.textContent
+			+'</span> | '+
+			PUTmessage.date
+			+'</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr>';
+			messageList[i].message = PUTmessage.message;
+			messageList[i].date = PUTmessage.date;
+		}
+	}
+}
+
+function changeItemMessageListDELETE (DELETEmessage) {
+	for (var i = 0; i < messageList.length; ++i) {
+		if (messageList[i].id === DELETEmessage.id) {
+			var k = 0;
+			var del = document.getElementById('chatField').firstChild.nextSibling;
+			while (k !== i) {
+				del = del.nextSibling;
+				++k;
+			}
+			del.innerHTML = '<div class="row"><div class="col-md-12 text-center"><small class="text-muted center">Message was deleted</small></div></div>';
+			messageList[i].deleted = true;
+		}
+	}
+}
+
+function getServerResponse (continueWith) {
+	var url = mainUrl + '?token=' + token;
+	get(url, function(responseText) {
+
+		console.assert(responseText != null);
+		var response = JSON.parse(responseText);
+		if (token < response.token) {
+			if (token === 'TN11EN')	{
+				getAllHistoryFromServer(response);
+				innerRestoredMesseges(messageList);
+			} else {
+				var messageListFromServer = response.message;
+				var messageListToInner = [];
+				for (var i = 0; i < messageListFromServer.length; ++i) {
+					if (messageListFromServer[i].methodRequest === 'DELETE') {
+						changeItemMessageListDELETE (messageListFromServer[i]);
+					} else if (messageListFromServer[i].methodRequest === 'PUT') {
+						changeItemMessageListPUT (messageListFromServer[i]);
+					} else if (messageListFromServer[i].methodRequest === 'POST') {
+						messageListToInner.push(messageListFromServer[i]);
+						messageList[messageCounter] = messageListFromServer[i];
+						if (messageList[messageCounter].deleted === 'false') {
+							messageList[messageCounter].deleted = false;
+						}
+						++messageCounter
+					}
+				}
+				innerRestoredMesseges(messageListToInner);
+			}
+
+			token = response.token;
+			editDeleteWithCurrentUserName ();	
 		}
 		continueWith && continueWith();
 	});
@@ -214,7 +188,6 @@ function defaultErrorHandler(message) {
 
 function ajax(method, url, data, continueWith, continueWithError) {
 	var xhr = new XMLHttpRequest();
-
 	continueWithError = continueWithError || defaultErrorHandler;
 	xhr.open(method || 'GET', url, true);
 
@@ -261,6 +234,18 @@ function output (str) {
 	connection.innerHTML = str;
 }
 
+function storeSend(_deleted, _message, _author, _date, _editDelete, _id, _methodRequest) {
+	return {
+		deleted: _deleted,
+		message: _message,
+ 		author:  _author,
+ 		date: _date,
+ 		editDelete:  _editDelete,
+ 		id: _id,
+ 		methodRequest: _methodRequest
+	};
+}
+
 function send (event) {
 	//will not send form (reload page), if click submit button
 	if (event.preventDefault) {
@@ -272,15 +257,14 @@ function send (event) {
 	if ((newMessageTextArea.value !== '') && (delEmptyText !== ''))  {
 		newMessageTextArea.value = newMessageTextArea.value.replace(/\r?\n/g, '<br>');
 		var currentTime = getTime();     							
-		var SC = storeSend(messageList[messageCounter] ,false, newMessageTextArea.value, 
-		currentUserName.textContent, currentTime, true, uniqueId());
-
-		post(mainUrl, JSON.stringify(SC), function(){
-			restoreMessages();
+		var toStore = storeSend(false, newMessageTextArea.value, 
+		currentUserName.textContent, currentTime, false, uniqueId(), 'POST');
+		post(mainUrl, JSON.stringify(toStore), function(){
+			getServerResponse();
 		});
+
 		var srcroll = document.getElementById('scrollDown');
 		srcroll.scrollTop = srcroll.scrollHeight;
-		scanDeleteMessage ();
 		newMessageTextArea.value = '';
 	}
 }
@@ -288,7 +272,7 @@ function send (event) {
 function showEditProfile (event) {
 	var showFormEditProfile = document.getElementById('showFormEditProfile');
 	showFormEditProfile.innerHTML ='<form class="form-inline" id="formEditProfile"><div class="form-group"><input type="text" class="form-control" style="height: 30px; width: 150px; display: inline" placeholder="Your name" id="inputEditProfile"><button type="submit" class="btn btn-info" style="height: 30px; display: inline" id="buttonSubmitProfile">edit</button></div></form>'
-	buttonSubmitProfile = document.getElementById('buttonSubmitProfile');
+	var buttonSubmitProfile = document.getElementById('buttonSubmitProfile');
 	buttonSubmitProfile.onclick = submitEditedProfile;
 }
 
@@ -297,20 +281,26 @@ function submitEditedProfile (event) {
 	if (event.preventDefault) {
     	event.preventDefault();
    	}
-   	currentUserName = document.getElementById('currentUserName');
-   	inputEditProfile = document.getElementById('inputEditProfile');
+   	var currentUserName = document.getElementById('currentUserName');
+   	var inputEditProfile = document.getElementById('inputEditProfile');
    	if (inputEditProfile.value !== '') {
-   		formEditProfile = document.getElementById('formEditProfile');
+   		var formEditProfile = document.getElementById('formEditProfile');
 		currentUserName.innerHTML = inputEditProfile.value;
 		storeName(inputEditProfile.value);
 		formEditProfile.style.display = 'none';
-		editDeleteChange (); 
+		editDeleteWithCurrentUserName (); 
    	}
 }
 
-function editDeleteChange () {
-	currentUserName = document.getElementById('currentUserName');
-	inputEditProfile = document.getElementById('inputEditProfile');
+function storeSubmitEditedProfile (indexMessageItem, _editDelete) {
+	var toStore = messageList[indexMessageItem];
+	toStore.editDelete = _editDelete;
+	return toStore; 
+}
+
+function editDeleteWithCurrentUserName () {
+	var currentUserName = document.getElementById('currentUserName');
+	var inputEditProfile = document.getElementById('inputEditProfile');
 	var editDeleteArray = document.getElementsByClassName('text-muted pull-right editDelete');
 	var usersArray = document.getElementsByClassName('userNameEditDelete');
 	for (var i = 0; i < usersArray.length; ++i) {
@@ -327,7 +317,7 @@ function editDeleteChange () {
 				editLi = editLi.previousSibling;
 				++messageNumber;
 			}
-			messageList[messageNumber] = storeSubmitEditedProfile(messageList[messageNumber], false);
+			messageList[messageNumber] = storeSubmitEditedProfile(messageNumber, false);
 		} else if (currentUserName.textContent === usersArray[i].textContent){
 			editDeleteArray[i].innerHTML = '<a href="#">Edit</a> | <a href="#">Delete</a>';
 			
@@ -341,13 +331,13 @@ function editDeleteChange () {
 				editLi = editLi.previousSibling;
 				++messageNumber;
 			}
-			messageList[messageNumber] = storeSubmitEditedProfile(messageList[messageNumber], true);
+			messageList[messageNumber] = storeSubmitEditedProfile(messageNumber, true);
 		}
 	}
-	scanDeleteMessage ();
+	addOnClickOnEditDelete ();
 }
 
-function scanDeleteMessage () {
+function addOnClickOnEditDelete () {
 	var editDeleteArray = document.getElementsByClassName('text-muted pull-right editDelete');
 	for (var i = 0; i < editDeleteArray.length; ++i) {
 		if (editDeleteArray[i].lastChild !== null) {
@@ -357,6 +347,13 @@ function scanDeleteMessage () {
 			editDeleteArray[i].firstChild.onclick = editMessage;
 		}
 	}
+}
+
+function storeDeleteMessage (indexMessageItem, _deleted, _methodRequest) {
+	var toStore = messageList[indexMessageItem];
+	toStore.deleted = _deleted;
+	toStore.methodRequest = _methodRequest;
+	return toStore; 
 }
 
 function deleteMessage (event) {
@@ -371,12 +368,18 @@ function deleteMessage (event) {
 		++messageNumber;
 	}	
 
-	var messageItem = {};
-	messageItem.id = messageList[messageNumber].id;
-
-	delete_(mainUrl, JSON.stringify(messageItem), function(){
-		restoreMessages();
+	var toStore = storeDeleteMessage(messageNumber, true, 'DELETE');
+	delete_(mainUrl, JSON.stringify(toStore), function(){
+		getServerResponse();
 	});
+}
+
+function storeEditMessage (indexMessageItem, _date, _message, _methodRequest) {
+	var toStore = messageList[indexMessageItem];
+	toStore.date = _date;
+	toStore.message = _message;
+	toStore.methodRequest = _methodRequest;
+	return toStore; 
 }
 
 function editMessage (event) {
@@ -400,7 +403,7 @@ function editMessage (event) {
 	var editButtonTextArea = document.getElementById('editButtonTextArea');
 
 	editButtonTextArea.onclick = function (event) {
-			//will not send form (reload page), if click submit button
+		//will not send form (reload page), if click submit button
 		if (event.preventDefault) {
     		event.preventDefault();
    		}
@@ -417,15 +420,13 @@ function editMessage (event) {
 				++messageNumber;
 			}
 
-			var messageItem = {};
-			messageItem.id = messageList[messageNumber].id;
-			messageItem.message = editMessageTextArea.value;
+			var currentTime = 'Message was edited on ' + getTime();
+			var toStore = storeEditMessage(messageNumber, currentTime, editMessageTextArea.value, 'PUT');
 
-			put(mainUrl, JSON.stringify(messageItem), function() {
-				restoreMessages();
+			put(mainUrl, JSON.stringify(toStore), function() {
+				getServerResponse();
 			});
 		}
-
 		sendButton.onclick = send;
 	}
 }
@@ -434,4 +435,11 @@ function getTime () {
 	var currentTime = new Date();
 	var result = currentTime.toDateString() + ' ' + currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
 	return result;
+}
+
+function uniqueId () {
+	var date = Date.now();
+	var random = Math.random() * Math.random();
+
+	return Math.floor(date * random).toString();
 }

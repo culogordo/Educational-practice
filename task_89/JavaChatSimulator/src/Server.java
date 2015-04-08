@@ -18,8 +18,6 @@ import java.util.Map;
 
 public class Server implements HttpHandler {
     private List<Message> history = new ArrayList<Message>();
-    private List<PUTrequest> editMessages = new ArrayList<PUTrequest>();
-    private List<String> deletedMessages = new ArrayList<String>();
 
     private MessageExchange messageExchange = new MessageExchange();
 
@@ -87,7 +85,7 @@ public class Server implements HttpHandler {
             if (token != null && !"".equals(token)) {
                 int index = messageExchange.getIndex(token);
                 logger.debug("processed method GET for user");
-                return messageExchange.getServerResponse(history.subList(index, history.size()), history.size(), deletedMessages, editMessages);
+                return messageExchange.getServerResponse(history.subList(index, history.size()), history.size());
             } else {
                 logger.debug("Token query parameter is absent in url: " + query);
                 return "Token query parameter is absent in url: " + query;
@@ -100,7 +98,6 @@ public class Server implements HttpHandler {
     private void doPost(HttpExchange httpExchange) {
         try {
             logger.debug("In POST");
-            //System.out.println(httpExchange.getRequestBody());
             Message message = messageExchange.getClientMessage(httpExchange.getRequestBody());
             System.out.println("Get Message from User : " + message);
             logger.debug("Get Message from User : " + message);
@@ -114,19 +111,20 @@ public class Server implements HttpHandler {
     private void doDelete(HttpExchange httpExchange) {
         try {
             logger.debug("In DELETE");
-            String messageToDeleteId  = messageExchange.getClientMessageToDeleteId(httpExchange.getRequestBody());
-            System.out.println("Get messageToDeleteId from User : " + messageToDeleteId);
-            logger.debug("Get messageToDeleteId from User : " + messageToDeleteId);
+            Message message = messageExchange.getClientMessage(httpExchange.getRequestBody());
+            System.out.println("Get messageToDeleteId from User : " + message.getId() + "     " + message.getMessage());
+            logger.debug("Get messageToDeleteId from User : " + message.getId() + "     " + message.getMessage());
             int deleteIndex = 0;
-            deletedMessages.add(messageToDeleteId);
             for (int i = 0; i < history.size(); ++i) {
-                if (history.get(i).getId().equals(messageToDeleteId)) {
+                if (history.get(i).getId().equals(message.getId())) {
                     deleteIndex = i;
                 }
             }
+
             Message deleteMessage = history.get(deleteIndex);
             deleteMessage.setDeleted(true);
             history.set(deleteIndex, deleteMessage);
+            history.add(message);
         } catch (ParseException e) {
             e.printStackTrace();
             logger.error(e);
@@ -136,22 +134,21 @@ public class Server implements HttpHandler {
     private void doPut(HttpExchange httpExchange) {
         try {
             logger.debug("In PUT");
-            PUTrequest putRequest  = messageExchange.getClientMessageToEdit(httpExchange.getRequestBody());
-            System.out.println(putRequest);
-            System.out.println("Get messageToEdit from User : " + putRequest);
-            logger.debug("Get messageToEdit from User : " + putRequest);
+            Message message  = messageExchange.getClientMessage(httpExchange.getRequestBody());
+            System.out.println("Get messageToEdit from User : " + message.getId() + "     " + message.getMessage());
+            logger.debug("Get messageToEdit from User : " + message.getId() + "     " + message.getMessage());
 
             int editIndex = 0;
-            editMessages.add(putRequest);
             for (int i = 0; i < history.size(); ++i) {
-                if (history.get(i).getId().equals(putRequest.getId())) {
+                if (history.get(i).getId().equals(message.getId())) {
                     editIndex = i;
                 }
             }
+
             Message editMessage = history.get(editIndex);
-            editMessage.setMessage(putRequest.getMessage());
+            editMessage.setMessage(message.getMessage());
             history.set(editIndex, editMessage);
-            System.out.println(editMessages);
+            history.add(message);
         } catch (ParseException e) {
             e.printStackTrace();
             logger.error(e);
@@ -167,7 +164,6 @@ public class Server implements HttpHandler {
             if("OPTIONS".equals(httpExchange.getRequestMethod())) {
                 headers.add("Access-Control-Allow-Methods","PUT, DELETE, POST, GET, OPTIONS");
             }
-
             httpExchange.sendResponseHeaders(200, bytes.length);
             OutputStream os = httpExchange.getResponseBody();
             os.write( bytes);

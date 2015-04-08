@@ -1,6 +1,7 @@
 public class PUTrequest {
     private String id;
     private String message;
+    //private String date;
 
     public PUTrequest(String id, String message) {
         this.id = id;
