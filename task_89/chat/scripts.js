@@ -7,7 +7,7 @@ var token = 'TN11EN';
 
 var run = function () {
 	var currentUserName = document.getElementById('currentUserName');
-		currentUserName.textContent = 'Enter your name';
+		currentUserName.textContent = restoreName() || (('Vadim') + uniqueId().substring(0, 5));
 	var sendButton = document.getElementById('sendButton');
 		sendButton.onclick = send;
 	var buttonEditProfile = document.getElementById('buttonEditProfile');
@@ -33,25 +33,28 @@ function innerRestoredMesseges (_newMessageListFromServer) {
 	var chatField = document.getElementById('chatField');
 	var size = _newMessageListFromServer.length;
 	for (var i = 0; i < size; ++i) {
+		var newLi = document.createElement('li');
+		newLi.setAttribute('class', 'media');
 		if (_newMessageListFromServer[i].deleted === true) {
-			chatField.innerHTML += '<li class="media"><div class="row"><div class="col-md-12 text-center"><small class="text-muted center">Message was deleted</small></div></div></li>';
+			newLi.innerHTML = '<div class="row"><div class="col-md-12 text-center"><small class="text-muted center">Message was deleted</small></div></div>';
 		} else if (_newMessageListFromServer[i].editDelete === true){
-					chatField.innerHTML += '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="message.png"></a><div class="media-body edit"><span class="currentChatText">'+
+					newLi.innerHTML = '<div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="message.png"></a><div class="media-body edit"><span class="currentChatText">'+
 					_newMessageListFromServer[i].message
 					+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
 					_newMessageListFromServer[i].author
 					+'</span> | '+
 					_newMessageListFromServer[i].date
-					+ '</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr></div></div></div></li>';
+					+ '</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr></div></div></div>';
 		} else if (_newMessageListFromServer[i].editDelete === false){
-				chatField.innerHTML += '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="message.png"></a><div class="media-body edit"><span class="currentChatText">'+
+				newLi.innerHTML = '<div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="message.png"></a><div class="media-body edit"><span class="currentChatText">'+
 				_newMessageListFromServer[i].message
 				+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
 				_newMessageListFromServer[i].author
 				+'</span> | '+
 				_newMessageListFromServer[i].date
-				+ '</small><small class="text-muted pull-right editDelete"></small><hr></div></div></div></li>';
+				+ '</small><small class="text-muted pull-right editDelete"></small><hr></div></div></div>';
 		}
+		chatField.appendChild(newLi);
 	}
 	var srcroll = document.getElementById('scrollDown');
 	srcroll.scrollTop = srcroll.scrollHeight; 
@@ -444,8 +447,17 @@ function editMessage (event) {
 
 function getTime () {
 	var currentTime = new Date();
-	var result = currentTime.toDateString() + ' ' + currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
-	return result;
+	var hh = currentTime.getHours();
+	var mm = currentTime.getMinutes();
+	var ss = currentTime.getSeconds();
+
+	if (hh < 10) { hh = '0' + hh; }
+
+	if (mm < 10) { mm = '0' + mm; }
+
+	if (ss < 10) { ss = '0' + ss; }
+
+	return (currentTime.toDateString() + ' ' + hh + ':' + mm + ':' + ss);
 }
 
 function uniqueId () {
