@@ -1,8 +1,11 @@
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.jsoup.Jsoup;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 public class MessageExchange {
@@ -34,12 +37,15 @@ public class MessageExchange {
         return (JSONObject) jsonParser.parse(json.trim());
     }
 
+    public static String html2text(String html) {
+        return Jsoup.parse(html).text();
+    }
+
     public Message getMessageFromJSONObject(JSONObject json) {
         Boolean deleted = (Boolean) json.get("deleted");
         Boolean editDelete = (Boolean) json.get("editDelete");
-        Message message = new Message((String)json.get("id"), (String)json.get("author"), (String)json.get("message"),
+        Message message = new Message((String)json.get("id"), (String)json.get("author"), html2text((String)json.get("message")),
                 deleted, (String)json.get("date"), editDelete, (String)json.get("methodRequest"));
-        System.out.println(message);
         return message;
     }
 

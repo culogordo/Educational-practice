@@ -139,7 +139,6 @@ function getServerResponse (continueWith) {
 			if (token === 'TN11EN')	{
 				getAllHistoryFromServer(response);
 				innerRestoredMesseges(messageList);
-				console.log(messageList);
 			} else {
 				var messageListFromServer = response.message;
 				var messageListToInner = [];
@@ -196,6 +195,9 @@ function defaultErrorHandler(message) {
 	clearInterval(interval);
 	console.error(message);
 	output(message);
+	setTimeout(function () {
+    	interval = setInterval("getServerResponse()", 500);
+    }, 3000);
 }
 
 function ajax(method, url, data, continueWith, continueWithError) {
@@ -208,15 +210,17 @@ function ajax(method, url, data, continueWith, continueWithError) {
 			return;
 
 		if(xhr.status != 200) {
-			clearInterval(interval);
 			continueWithError('Error on the server side, response ' + xhr.status);
 			return;
 		}
 
 		var responseText = xhr.responseText.replace(/\r?\n/g, '\\n');
+		var connection = document.getElementById('connection');
+		if (connection.value !== 'Connection is great!') {
+			connection.innerHTML = 'Connection is great!';
+		}
 
 		if(isError(responseText)) {
-			clearInterval(interval);
 			continueWithError('Error on the server side, response ' + xhr.responseText);
 			return;
 		}
@@ -225,12 +229,10 @@ function ajax(method, url, data, continueWith, continueWithError) {
 	};    
 
     xhr.ontimeout = function () {
-    	clearInterval(interval);
     	continueWithError('Server timed out !');
     }
 
     xhr.onerror = function (e) {
-    	//clearInterval(interval);
     	var errMsg = 'Server connection error !\n'+
     	'Check if server is active';
         continueWithError(errMsg);
@@ -270,6 +272,7 @@ function send (event) {
 	var delEmptyText = newMessageTextArea.value.replace(/\r?\n?\t?\s/g, '');
 	if ((newMessageTextArea.value !== '') && (delEmptyText !== ''))  {
 		newMessageTextArea.value = newMessageTextArea.value.replace(/\r?\n/g, '<br>');
+		//newMessageTextArea.value = newMessageTextArea.value.replace(/<\/?[^>]+(>|$)/g, '');
 		var currentTime = getTime();     							
 		var toStore = storeSend(false, newMessageTextArea.value, 
 		currentUserName.textContent, currentTime, false, uniqueId(), 'POST');
@@ -284,6 +287,12 @@ function send (event) {
 }
 
 function showEditProfile (event) {
+	var sendButton = document.getElementById('sendButton');
+		sendButton.onclick = '';
+	var currentUserName = document.getElementById('currentUserName');
+		currentUserName.innerHTML = '';
+		console.log(currentUserName.value);
+	editDeleteWithCurrentUserName (); 
 	var showFormEditProfile = document.getElementById('showFormEditProfile');
 	showFormEditProfile.innerHTML ='<form class="form-inline" id="formEditProfile"><div class="form-group"><input type="text" class="form-control" style="height: 30px; width: 150px; display: inline" placeholder="Your name" id="inputEditProfile"><button type="submit" class="btn btn-info" style="height: 30px; display: inline" id="buttonSubmitProfile">edit</button></div></form>'
 	var buttonSubmitProfile = document.getElementById('buttonSubmitProfile');
@@ -302,6 +311,7 @@ function submitEditedProfile (event) {
 		currentUserName.innerHTML = inputEditProfile.value;
 		storeName(inputEditProfile.value);
 		formEditProfile.style.display = 'none';
+		sendButton.onclick = send;
 		editDeleteWithCurrentUserName (); 
    	}
 }
@@ -423,7 +433,7 @@ function editMessage (event) {
    		}
 
    		if (editMessageTextArea.value !== '') {
-
+   			//editMessageTextArea.value = editMessageTextArea.value.replace(/<\/?[^>]+(>|$)/g, '');
 			var messageNumber = 0;
 			while (editLi.tagName != 'LI') {
 				editLi = editLi.parentNode;
