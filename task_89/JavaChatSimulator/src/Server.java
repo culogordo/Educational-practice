@@ -99,8 +99,8 @@ public class Server implements HttpHandler {
         try {
             logger.debug("In POST");
             Message message = messageExchange.getClientMessage(httpExchange.getRequestBody());
-            System.out.println("Get Message from User : " + message);
-            logger.debug("Get Message from User : " + message);
+            System.out.println("Get Message from User : " + message.getAuthor() + " | " + message.getMessage());
+            logger.debug("Get Message from User : " + message.getAuthor() + " | " + message.getMessage());
             history.add(message);
         } catch (ParseException e) {
             System.err.println("Invalid user message: " + httpExchange.getRequestBody() + " " + e.getMessage());
@@ -112,8 +112,8 @@ public class Server implements HttpHandler {
         try {
             logger.debug("In DELETE");
             Message message = messageExchange.getClientMessage(httpExchange.getRequestBody());
-            System.out.println("Get messageToDeleteId from User : " + message.getId() + "     " + message.getMessage());
-            logger.debug("Get messageToDeleteId from User : " + message.getId() + "     " + message.getMessage());
+            System.out.println("Get messageToDeleteId from User : " + message.getAuthor() + " | " + message.getId());
+            logger.debug("Get messageToDeleteId from User : " + message.getAuthor() + " | " + message.getId());
             int deleteIndex = 0;
             for (int i = 0; i < history.size(); ++i) {
                 if (history.get(i).getId().equals(message.getId())) {
@@ -135,8 +135,8 @@ public class Server implements HttpHandler {
         try {
             logger.debug("In PUT");
             Message message  = messageExchange.getClientMessage(httpExchange.getRequestBody());
-            System.out.println("Get messageToEdit from User : " + message.getId() + "     " + message.getMessage());
-            logger.debug("Get messageToEdit from User : " + message.getId() + "     " + message.getMessage());
+            System.out.println("Get messageToEdit from User : " + message.getAuthor() + " | " + message.getMessage());
+            logger.debug("Get messageToEdit from User : " + message.getAuthor() + " | " + message.getMessage());
 
             int editIndex = 0;
             for (int i = 0; i < history.size(); ++i) {
@@ -147,6 +147,7 @@ public class Server implements HttpHandler {
 
             Message editMessage = history.get(editIndex);
             editMessage.setMessage(message.getMessage());
+            editMessage.setDate(message.getDate());;
             history.set(editIndex, editMessage);
             history.add(message);
         } catch (ParseException e) {

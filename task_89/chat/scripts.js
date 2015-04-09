@@ -4,8 +4,6 @@ var messageList = [];
 var interval = null;
 var mainUrl = 'http://localhost:999/chat';
 var token = 'TN11EN';
-var messageCounter = 0;
-
 
 var run = function () {
 	var currentUserName = document.getElementById('currentUserName');
@@ -45,7 +43,7 @@ function innerRestoredMesseges (_newMessageListFromServer) {
 					+'</span> | '+
 					_newMessageListFromServer[i].date
 					+ '</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr></div></div></div></li>';
-		} else {
+		} else if (_newMessageListFromServer[i].editDelete === false){
 				chatField.innerHTML += '<li class="media"><div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="message.png"></a><div class="media-body edit"><span class="currentChatText">'+
 				_newMessageListFromServer[i].message
 				+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
@@ -65,11 +63,7 @@ function getAllHistoryFromServer (_firstResponseFromServer) {
 	messageListFromServer = _firstResponseFromServer.message;
 	for (var i = 0; i < messageListFromServer.length; ++i) {
 		if (messageListFromServer[i].methodRequest === 'POST') {
-			messageList[messageCounter] = messageListFromServer[i];
-			if (messageList[messageCounter].deleted === 'false') {
-				messageList[messageCounter].deleted = false;
-			}
-			++messageCounter;
+			messageList.push(messageListFromServer[i]);
 		}
 	}
 }
@@ -89,7 +83,7 @@ function changeItemMessageListPUT (PUTmessage) {
    			editLi.innerHTML = '<span class="currentChatText">'+
 			PUTmessage.message
 			+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
-			currentUserName.textContent
+			messageList[i].author
 			+'</span> | '+
 			PUTmessage.date
 			+'</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr>';
@@ -114,6 +108,23 @@ function changeItemMessageListDELETE (DELETEmessage) {
 	}
 }
 
+function editDeleteResponseToBoolean (serverResponse) {
+	for (var i = 0; i < serverResponse.length; ++i) {
+		if (serverResponse[i].deleted === 'false') {
+			serverResponse[i].deleted = false;
+		} else {
+			serverResponse[i].deleted = true;
+		}
+
+		if (serverResponse[i].editDelete === 'false') {
+			serverResponse[i].editDelete = false;
+		} else {
+			serverResponse[i].editDelete = true;
+		}
+	}
+	return serverResponse;
+}
+
 function getServerResponse (continueWith) {
 	var url = mainUrl + '?token=' + token;
 	get(url, function(responseText) {
@@ -121,9 +132,11 @@ function getServerResponse (continueWith) {
 		console.assert(responseText != null);
 		var response = JSON.parse(responseText);
 		if (token < response.token) {
+			response.message = editDeleteResponseToBoolean(response.message);
 			if (token === 'TN11EN')	{
 				getAllHistoryFromServer(response);
 				innerRestoredMesseges(messageList);
+				console.log(messageList);
 			} else {
 				var messageListFromServer = response.message;
 				var messageListToInner = [];
@@ -134,11 +147,7 @@ function getServerResponse (continueWith) {
 						changeItemMessageListPUT (messageListFromServer[i]);
 					} else if (messageListFromServer[i].methodRequest === 'POST') {
 						messageListToInner.push(messageListFromServer[i]);
-						messageList[messageCounter] = messageListFromServer[i];
-						if (messageList[messageCounter].deleted === 'false') {
-							messageList[messageCounter].deleted = false;
-						}
-						++messageCounter
+						messageList.push(messageListFromServer[i]);
 					}
 				}
 				innerRestoredMesseges(messageListToInner);
@@ -201,13 +210,15 @@ function ajax(method, url, data, continueWith, continueWithError) {
 			return;
 		}
 
-		if(isError(xhr.responseText)) {
+		var responseText = xhr.responseText.replace(/\r?\n/g, '\\n');
+
+		if(isError(responseText)) {
 			clearInterval(interval);
 			continueWithError('Error on the server side, response ' + xhr.responseText);
 			return;
 		}
 
-		continueWith(xhr.responseText);
+		continueWith(responseText);
 	};    
 
     xhr.ontimeout = function () {
@@ -216,7 +227,7 @@ function ajax(method, url, data, continueWith, continueWithError) {
     }
 
     xhr.onerror = function (e) {
-    	clearInterval(interval);
+    	//clearInterval(interval);
     	var errMsg = 'Server connection error !\n'+
     	'Check if server is active';
         continueWithError(errMsg);
