@@ -38,7 +38,11 @@ public class MessageExchange {
     }
 
     public static String html2text(String html) {
-        return Jsoup.parse(html).text();
+        Double change = Math.random();
+        html = html.replaceAll("\n", change.toString());
+        html = (Jsoup.parse(html).text());
+        html = html.replaceAll(change.toString(), "\n");
+        return html;
     }
 
     public Message getMessageFromJSONObject(JSONObject json) {

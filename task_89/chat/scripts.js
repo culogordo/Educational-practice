@@ -7,7 +7,8 @@ var token = 'TN11EN';
 
 var run = function () {
 	var currentUserName = document.getElementById('currentUserName');
-		currentUserName.textContent = restoreName() || (('Vadim') + uniqueId().substring(0, 5));
+		currentUserName.textContent = restoreName() || 'Vadim';
+		currentUserName.textContent += uniqueId().substring(0, 5);
 	var sendButton = document.getElementById('sendButton');
 		sendButton.onclick = send;
 	var buttonEditProfile = document.getElementById('buttonEditProfile');
@@ -39,7 +40,7 @@ function innerRestoredMesseges (_newMessageListFromServer) {
 			newLi.innerHTML = '<div class="row"><div class="col-md-12 text-center"><small class="text-muted center">Message was deleted</small></div></div>';
 		} else if (_newMessageListFromServer[i].editDelete === true){
 					newLi.innerHTML = '<div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="message.png"></a><div class="media-body edit"><span class="currentChatText">'+
-					_newMessageListFromServer[i].message
+					_newMessageListFromServer[i].message.replace(/\n/g, '<br>')
 					+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
 					_newMessageListFromServer[i].author
 					+'</span> | '+
@@ -47,7 +48,7 @@ function innerRestoredMesseges (_newMessageListFromServer) {
 					+ '</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr></div></div></div>';
 		} else if (_newMessageListFromServer[i].editDelete === false){
 				newLi.innerHTML = '<div class="media-body"><div class="media"><a class="pull-left" href="#"><img class="media-object img-circle" src="message.png"></a><div class="media-body edit"><span class="currentChatText">'+
-				_newMessageListFromServer[i].message
+				_newMessageListFromServer[i].message.replace(/\n/g, '<br>')
 				+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
 				_newMessageListFromServer[i].author
 				+'</span> | '+
@@ -80,11 +81,9 @@ function changeItemMessageListPUT (PUTmessage) {
 				editLi = editLi.nextSibling;
 				++k;
 			}
-
 			editLi = editLi.getElementsByClassName('media-body edit')[0];
-			PUTmessage.message = PUTmessage.message.replace(/\r?\n/g, '<br>');
    			editLi.innerHTML = '<span class="currentChatText">'+
-			PUTmessage.message
+			PUTmessage.message.replace(/\n/g, '<br>')
 			+'</span><br><small class="text-muted"><span class="userNameEditDelete">'+
 			messageList[i].author
 			+'</span> | '+
@@ -195,9 +194,6 @@ function defaultErrorHandler(message) {
 	clearInterval(interval);
 	console.error(message);
 	output(message);
-	setTimeout(function () {
-    	interval = setInterval("getServerResponse()", 500);
-    }, 3000);
 }
 
 function ajax(method, url, data, continueWith, continueWithError) {
@@ -214,10 +210,10 @@ function ajax(method, url, data, continueWith, continueWithError) {
 			return;
 		}
 
-		var responseText = xhr.responseText.replace(/\r?\n/g, '\\n');
+		var responseText = xhr.responseText.replace(/\n/g, '\\n');
 		var connection = document.getElementById('connection');
 		if (connection.value !== 'Connection is great!') {
-			connection.innerHTML = 'Connection is great!';
+			output('Connection is great!');
 		}
 
 		if(isError(responseText)) {
@@ -229,12 +225,12 @@ function ajax(method, url, data, continueWith, continueWithError) {
 	};    
 
     xhr.ontimeout = function () {
-    	continueWithError('Server timed out !');
+    	continueWithError('Server timed out!');
     }
 
     xhr.onerror = function (e) {
-    	var errMsg = 'Server connection error !\n'+
-    	'Check if server is active';
+    	var errMsg = 'Server connection error!\n'+
+    	'Refresh you page!';
         continueWithError(errMsg);
     };
 
@@ -270,9 +266,7 @@ function send (event) {
 	var currentUserName = document.getElementById('currentUserName'); 	
 	var newMessageTextArea = document.getElementById('newMessageTextArea');
 	var delEmptyText = newMessageTextArea.value.replace(/\r?\n?\t?\s/g, '');
-	if ((newMessageTextArea.value !== '') && (delEmptyText !== ''))  {
-		newMessageTextArea.value = newMessageTextArea.value.replace(/\r?\n/g, '<br>');
-		//newMessageTextArea.value = newMessageTextArea.value.replace(/<\/?[^>]+(>|$)/g, '');
+	if (delEmptyText !== '')  {
 		var currentTime = getTime();     							
 		var toStore = storeSend(false, newMessageTextArea.value, 
 		currentUserName.textContent, currentTime, false, uniqueId(), 'POST');
@@ -286,9 +280,20 @@ function send (event) {
 	}
 }
 
+function coloredEditProfile (error) {
+	var errorEditProfile = document.getElementById('errorEditProfile');
+	var inputEditProfile = document.getElementById('inputEditProfile');
+	inputEditProfile.style.background = '#FFDAB9';
+	errorEditProfile.innerHTML = error;
+}
+
 function showEditProfile (event) {
 	var sendButton = document.getElementById('sendButton');
-		sendButton.onclick = '';
+		sendButton.onclick = (function() {
+      		return function() { 
+          		coloredEditProfile('Enter your name!');
+      		}
+   		})();
 	var currentUserName = document.getElementById('currentUserName');
 		currentUserName.innerHTML = '';
 		console.log(currentUserName.value);
@@ -299,6 +304,32 @@ function showEditProfile (event) {
 	buttonSubmitProfile.onclick = submitEditedProfile;
 }
 
+function validateUsername(fld) {
+    var error = '';
+    var illegalChars = /\W/; //allow letters, numbers, and underscores
+ 
+    if (fld.value == '') {
+        error = "You didn't enter a username.\n";
+        coloredEditProfile(error);
+        return false;
+ 
+    } else if ((fld.value.length < 3) || (fld.value.length > 15)) {
+        error = "Wrong length.\n";
+		coloredEditProfile(error);
+		return false;
+ 
+    } else if (illegalChars.test(fld.value)) {
+        error = "Contains illegal characters.\n";
+		coloredEditProfile(error);
+		return false;
+ 
+    } else {
+    	document.getElementById('errorEditProfile').innerHTML = '';
+        fld.style.background = 'White';
+    }
+    return true;
+}
+
 function submitEditedProfile (event) {
 	//will not send form (reload page), if click submit button
 	if (event.preventDefault) {
@@ -306,7 +337,7 @@ function submitEditedProfile (event) {
    	}
    	var currentUserName = document.getElementById('currentUserName');
    	var inputEditProfile = document.getElementById('inputEditProfile');
-   	if (inputEditProfile.value !== '') {
+   	if (validateUsername(inputEditProfile) === true) {
    		var formEditProfile = document.getElementById('formEditProfile');
 		currentUserName.innerHTML = inputEditProfile.value;
 		storeName(inputEditProfile.value);
@@ -337,10 +368,11 @@ function editDeleteWithCurrentUserName () {
 				editLi = editLi.parentNode;
 			}
 
-			while (editLi.previousSibling.tagName === 'LI') {
+			while (editLi.previousSibling !== null && editLi.previousSibling.tagName === 'LI') {
 				editLi = editLi.previousSibling;
 				++messageNumber;
 			}
+			
 			messageList[messageNumber] = storeSubmitEditedProfile(messageNumber, false);
 		} else if (currentUserName.textContent === usersArray[i].textContent){
 			editDeleteArray[i].innerHTML = '<a href="#">Edit</a> | <a href="#">Delete</a>';
@@ -351,10 +383,11 @@ function editDeleteWithCurrentUserName () {
 				editLi = editLi.parentNode;
 			}
 
-			while (editLi.previousSibling.tagName === 'LI') {
+			while (editLi.previousSibling !== null && editLi.previousSibling.tagName === 'LI') {
 				editLi = editLi.previousSibling;
 				++messageNumber;
 			}
+
 			messageList[messageNumber] = storeSubmitEditedProfile(messageNumber, true);
 		}
 	}
@@ -432,8 +465,8 @@ function editMessage (event) {
     		event.preventDefault();
    		}
 
-   		if (editMessageTextArea.value !== '') {
-   			//editMessageTextArea.value = editMessageTextArea.value.replace(/<\/?[^>]+(>|$)/g, '');
+   		var delEmptyText = editMessageTextArea.value.replace(/\r?\n?\t?\s/g, '');
+   		if (delEmptyText !== '') {
 			var messageNumber = 0;
 			while (editLi.tagName != 'LI') {
 				editLi = editLi.parentNode;
@@ -443,15 +476,14 @@ function editMessage (event) {
 				editLi = editLi.previousSibling;
 				++messageNumber;
 			}
-
 			var currentTime = 'Message was edited on ' + getTime();
 			var toStore = storeEditMessage(messageNumber, currentTime, editMessageTextArea.value, 'PUT');
 
 			put(mainUrl, JSON.stringify(toStore), function() {
 				getServerResponse();
 			});
+			sendButton.onclick = send;
 		}
-		sendButton.onclick = send;
 	}
 }
 
