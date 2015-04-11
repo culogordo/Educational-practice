@@ -133,7 +133,7 @@ function getServerResponse (continueWith) {
 
 		console.assert(responseText != null);
 		var response = JSON.parse(responseText);
-		if (token < response.token) {
+		if (+token.substr(2, token.length-4) < +response.token.substr(2, response.token.length-4)) {
 			response.message = editDeleteResponseToBoolean(response.message);
 			if (token === 'TN11EN')	{
 				getAllHistoryFromServer(response);
