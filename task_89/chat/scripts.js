@@ -56,6 +56,11 @@ function innerRestoredMesseges (_newMessageListFromServer) {
 				+ '</small><small class="text-muted pull-right editDelete"></small><hr></div></div></div>';
 		}
 		chatField.appendChild(newLi);
+		var currentUserName = document.getElementById('currentUserName');
+		var usersArray = document.getElementsByClassName('userNameEditDelete');
+		if (currentUserName.textContent === usersArray[usersArray.length - 1].textContent) {
+			editDeleteWithCurrentUserName();
+		}
 	}
 	var srcroll = document.getElementById('scrollDown');
 	srcroll.scrollTop = srcroll.scrollHeight; 
@@ -154,8 +159,7 @@ function getServerResponse (continueWith) {
 				innerRestoredMesseges(messageListToInner);
 			}
 
-			token = response.token;
-			editDeleteWithCurrentUserName ();	
+			token = response.token;	
 		}
 		continueWith && continueWith();
 	});
@@ -273,7 +277,6 @@ function send (event) {
 		post(mainUrl, JSON.stringify(toStore), function(){
 			getServerResponse();
 		});
-
 		var srcroll = document.getElementById('scrollDown');
 		srcroll.scrollTop = srcroll.scrollHeight;
 		newMessageTextArea.value = '';
@@ -296,7 +299,6 @@ function showEditProfile (event) {
    		})();
 	var currentUserName = document.getElementById('currentUserName');
 		currentUserName.innerHTML = '';
-		console.log(currentUserName.value);
 	editDeleteWithCurrentUserName (); 
 	var showFormEditProfile = document.getElementById('showFormEditProfile');
 	showFormEditProfile.innerHTML ='<form class="form-inline" id="formEditProfile"><div class="form-group"><input type="text" class="form-control" style="height: 30px; width: 150px; display: inline" placeholder="Your name" id="inputEditProfile"><button type="submit" class="btn btn-info" style="height: 30px; display: inline" id="buttonSubmitProfile">edit</button></div></form>'
@@ -355,9 +357,9 @@ function storeSubmitEditedProfile (indexMessageItem, _editDelete) {
 
 function editDeleteWithCurrentUserName () {
 	var currentUserName = document.getElementById('currentUserName');
+	var usersArray = document.getElementsByClassName('userNameEditDelete');
 	var inputEditProfile = document.getElementById('inputEditProfile');
 	var editDeleteArray = document.getElementsByClassName('text-muted pull-right editDelete');
-	var usersArray = document.getElementsByClassName('userNameEditDelete');
 	for (var i = 0; i < usersArray.length; ++i) {
 		if (currentUserName.textContent !== usersArray[i].textContent) {
 			editDeleteArray[i].innerHTML = '';
@@ -391,7 +393,7 @@ function editDeleteWithCurrentUserName () {
 			messageList[messageNumber] = storeSubmitEditedProfile(messageNumber, true);
 		}
 	}
-	addOnClickOnEditDelete ();
+	addOnClickOnEditDelete ();	
 }
 
 function addOnClickOnEditDelete () {
@@ -439,9 +441,50 @@ function storeEditMessage (indexMessageItem, _date, _message, _methodRequest) {
 	return toStore; 
 }
 
+function coloredEditMessage (error) {
+	var errorEditMessage = document.getElementById('errorEditMessage');
+	var editMessageTextArea = document.getElementById('editMessageTextArea');
+	editMessageTextArea.focus();
+	editMessageTextArea.style.background = '#FFFACD';
+	errorEditMessage.innerHTML = error;
+}
+
+function removeOnClickOnEditDeleteToEditMessage () {
+	var editDeleteArray = document.getElementsByClassName('text-muted pull-right editDelete');
+	for (var i = 0; i < editDeleteArray.length; ++i) {
+		if (editDeleteArray[i].lastChild !== null) {
+			editDeleteArray[i].lastChild.onclick = (function() {
+      			return function() { 
+          			coloredEditMessage('Edit your message before delete another message!');
+      			}
+   			})();
+		}
+		if(editDeleteArray[i].firstChild !== null) {
+			editDeleteArray[i].firstChild.onclick = (function() {
+      			return function() { 
+          			coloredEditMessage('Edit this message before edit another message!');
+      			}
+   			})();
+		}
+	}
+}
+
 function editMessage (event) {
+	removeOnClickOnEditDeleteToEditMessage ()
 	var sendButton = document.getElementById('sendButton');
-	sendButton.onclick = '';
+		sendButton.onclick = (function() {
+      		return function() { 
+          		coloredEditMessage('Edit your message before send new message!');
+      		}
+   		})();
+
+	var buttonEditProfile = document.getElementById('buttonEditProfile');
+		buttonEditProfile.onclick = (function() {
+      		return function() { 
+          		coloredEditMessage('Edit your message before profile change!');
+      		}
+   		})();
+
 	var editLi = event.target;
 	while (editLi.className != 'media-body edit') {
 		editLi = editLi.parentNode;
@@ -455,7 +498,7 @@ function editMessage (event) {
 	var currentTextAreaContent = editLi.firstChild.textContent;  
 	editLi.innerHTML = '<div class="input-group"><textarea type="text" class="form-control" id="editMessageTextArea" style="height:60px; resize: none">'+
 	currentTextAreaContent 
-	+'</textarea><span class="input-group-btn"><button type="submit" class="btn btn-info pull-right" id="editButtonTextArea" style="height:60px">edit</button></span></div>';
+	+'</textarea><span class="input-group-btn"><button type="submit" class="btn btn-info pull-right" id="editButtonTextArea" style="height:60px">edit</button></span></div><p style="color: red" id="errorEditMessage"></p>';
 	var editMessageTextArea = document.getElementById('editMessageTextArea');
 	var editButtonTextArea = document.getElementById('editButtonTextArea');
 
@@ -482,7 +525,9 @@ function editMessage (event) {
 			put(mainUrl, JSON.stringify(toStore), function() {
 				getServerResponse();
 			});
+			addOnClickOnEditDelete();
 			sendButton.onclick = send;
+			buttonEditProfile.onclick = showEditProfile;
 		}
 	}
 }
