@@ -6,29 +6,25 @@ var mainUrl = 'http://localhost:999/chat';
 var token = 'TN11EN';
 
 var run = function () {
-	var currentUserName = document.getElementById('currentUserName');
-		currentUserName.textContent = restoreName() || 'Vadim';
-		currentUserName.textContent += uniqueId().substring(0, 5);
 	var sendButton = document.getElementById('sendButton');
 		sendButton.onclick = send;
+	var newMessageTextArea = document.getElementById('newMessageTextArea');
+		newMessageTextArea.onkeydown = checkCtrlEnterPost;
 	var buttonEditProfile = document.getElementById('buttonEditProfile');
 		buttonEditProfile.onclick = showEditProfile;
+	var currentUserName = document.getElementById('currentUserName');
+		showEditProfile();
 }();
 
+function checkCtrlEnterPost(e) {
+	var sendButton = document.getElementById('sendButton');
+	e = e || window.event;
+	if(e.keyCode === 13 && e.ctrlKey) {
+		sendButton.click();
+	} 
+}
+
 var interval = setInterval("getServerResponse()", 500);
-
-function storeName (nameToSave) {
-	var stringToSave = JSON.stringify(nameToSave);
-	localStorage.setItem("Previos name", stringToSave); 
-}
-
-function restoreName () {
-	if(typeof(Storage).toString === "undefined") {
-		return;
-	}
-	var item = localStorage.getItem("Previos name");
-	return item && JSON.parse(item); 
-}
 
 function innerRestoredMesseges (_newMessageListFromServer) {
 	var chatField = document.getElementById('chatField');
@@ -58,7 +54,7 @@ function innerRestoredMesseges (_newMessageListFromServer) {
 		chatField.appendChild(newLi);
 		var currentUserName = document.getElementById('currentUserName');
 		var usersArray = document.getElementsByClassName('userNameEditDelete');
-		if (currentUserName.textContent === usersArray[usersArray.length - 1].textContent) {
+		if (currentUserName.textContent === usersArray[usersArray.length - 1].textContent && _newMessageListFromServer[i].deleted === false) {
 			editDeleteWithCurrentUserName();
 		}
 	}
@@ -282,6 +278,7 @@ function storeSend(_deleted, _message, _author, _date, _editDelete, _id, _method
 
 function send (event) {
 	//will not send form (reload page), if click submit button
+
 	if (event.preventDefault) {
     	event.preventDefault();
    	}
@@ -305,6 +302,7 @@ function coloredEditProfile (error) {
 	var errorEditProfile = document.getElementById('errorEditProfile');
 	var inputEditProfile = document.getElementById('inputEditProfile');
 	inputEditProfile.style.background = '#FFDAB9';
+	inputEditProfile.focus();
 	errorEditProfile.innerHTML = error;
 }
 
@@ -315,6 +313,7 @@ function showEditProfile (event) {
           		coloredEditProfile('Enter your name!');
       		}
    		})();
+
 	var currentUserName = document.getElementById('currentUserName');
 		currentUserName.innerHTML = '';
 	editDeleteWithCurrentUserName (); 
@@ -333,13 +332,13 @@ function validateUsername(fld) {
         coloredEditProfile(error);
         return false;
  
-    } else if ((fld.value.length < 3) || (fld.value.length > 15)) {
+    } else if ((fld.value.length < 3) || (fld.value.length > 20)) {
         error = "Wrong length.\n";
 		coloredEditProfile(error);
 		return false;
  
     } else if (illegalChars.test(fld.value)) {
-        error = "Contains illegal characters.\n";
+        error = "Only letters, numbers and underscores.\n";
 		coloredEditProfile(error);
 		return false;
  
@@ -360,7 +359,6 @@ function submitEditedProfile (event) {
    	if (validateUsername(inputEditProfile) === true) {
    		var formEditProfile = document.getElementById('formEditProfile');
 		currentUserName.innerHTML = inputEditProfile.value;
-		storeName(inputEditProfile.value);
 		formEditProfile.style.display = 'none';
 		sendButton.onclick = send;
 		editDeleteWithCurrentUserName (); 

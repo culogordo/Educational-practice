@@ -42,6 +42,9 @@ public class MessageExchange {
         html = html.replaceAll("\n", change.toString());
         html = (Jsoup.parse(html).text());
         html = html.replaceAll(change.toString(), "\n");
+        if (Jsoup.parse(html).text().equals("")) {
+            html = "<h3>This user trying to break application!</h3>";
+        }
         return html;
     }
 
