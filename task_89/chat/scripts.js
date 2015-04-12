@@ -53,8 +53,7 @@ function innerRestoredMesseges (_newMessageListFromServer) {
 		}
 		chatField.appendChild(newLi);
 		var currentUserName = document.getElementById('currentUserName');
-		var usersArray = document.getElementsByClassName('userNameEditDelete');
-		if (currentUserName.textContent === usersArray[usersArray.length - 1].textContent && _newMessageListFromServer[i].deleted === false) {
+		if (currentUserName.textContent === _newMessageListFromServer[i].author && _newMessageListFromServer[i].deleted === false) {
 			editDeleteWithCurrentUserName();
 		}
 	}
@@ -93,8 +92,8 @@ function changeItemMessageListPUT (PUTmessage) {
 			messageList[i].message = PUTmessage.message;
 			messageList[i].date = PUTmessage.date;
 			var currentUserName = document.getElementById('currentUserName');
-			var usersArray = document.getElementsByClassName('userNameEditDelete');
-			if (currentUserName.textContent === usersArray[i].textContent) {
+			if (currentUserName.textContent === messageList[i].author) {
+				editLi.focus();
 				editDeleteWithCurrentUserName();
 			}
 		}
@@ -112,6 +111,9 @@ function changeItemMessageListDELETE (DELETEmessage) {
 			}
 			del.innerHTML = '<div class="row"><div class="col-md-12 text-center"><small class="text-muted center">Message was deleted</small></div></div>';
 			messageList[i].deleted = true;
+			if (messageList[i].author === document.getElementById('currentUserName').textContent) {
+				del.focus();	
+			}
 		}
 	}
 }
@@ -155,9 +157,9 @@ function getServerResponse (continueWith) {
 					} else if (messageListFromServer[i].methodRequest === 'POST') {
 						messageListToInner.push(messageListFromServer[i]);
 						messageList.push(messageListFromServer[i]);
+						innerRestoredMesseges(messageListToInner);
 					}
 				}
-				innerRestoredMesseges(messageListToInner);
 			}
 
 			token = response.token;	
@@ -320,6 +322,7 @@ function showEditProfile (event) {
 	var showFormEditProfile = document.getElementById('showFormEditProfile');
 	showFormEditProfile.innerHTML ='<form class="form-inline" id="formEditProfile"><div class="form-group"><input type="text" class="form-control" style="height: 30px; width: 150px; display: inline" placeholder="Your name" id="inputEditProfile"><button type="submit" class="btn btn-info" style="height: 30px; display: inline" id="buttonSubmitProfile">edit</button></div></form>'
 	var buttonSubmitProfile = document.getElementById('buttonSubmitProfile');
+	document.getElementById('inputEditProfile').focus();
 	buttonSubmitProfile.onclick = submitEditedProfile;
 }
 
