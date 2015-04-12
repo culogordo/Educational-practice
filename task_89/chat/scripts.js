@@ -93,9 +93,14 @@ function changeItemMessageListPUT (PUTmessage) {
 			messageList[i].author
 			+'</span> | '+
 			PUTmessage.date
-			+'</small><small class="text-muted pull-right editDelete"><a href="#">Edit</a> | <a href="#">Delete</a></small><hr>';
+			+'</small><small class="text-muted pull-right editDelete"></small><hr>';
 			messageList[i].message = PUTmessage.message;
 			messageList[i].date = PUTmessage.date;
+			var currentUserName = document.getElementById('currentUserName');
+			var usersArray = document.getElementsByClassName('userNameEditDelete');
+			if (currentUserName.textContent === usersArray[i].textContent) {
+				editDeleteWithCurrentUserName();
+			}
 		}
 	}
 }
@@ -194,10 +199,22 @@ function isError(text) {
 	return !!obj.error;
 }
 
+function serverStoped () {
+	var currentUserName = document.getElementById('currentUserName');
+		currentUserName.innerHTML = '';
+	editDeleteWithCurrentUserName;
+	var sendButton = document.getElementById('sendButton');
+		sendButton.onclick = '';
+	var buttonEditProfile = document.getElementById('buttonEditProfile');
+		buttonEditProfile.onclick = '';
+}
+
 function defaultErrorHandler(message) {
+	document.getElementsByClassName('panel panel-primary connection')[0].style.background = '#FFDAB9';
 	clearInterval(interval);
 	console.error(message);
 	output(message);
+	serverStoped ();
 }
 
 function ajax(method, url, data, continueWith, continueWithError) {
@@ -217,6 +234,7 @@ function ajax(method, url, data, continueWith, continueWithError) {
 		var responseText = xhr.responseText.replace(/\n/g, '\\n');
 		var connection = document.getElementById('connection');
 		if (connection.value !== 'Connection is great!') {
+			document.getElementsByClassName('panel panel-primary connection')[0].style.background = '#D9EDF7';
 			output('Connection is great!');
 		}
 
