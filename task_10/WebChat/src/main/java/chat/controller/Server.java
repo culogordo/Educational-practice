@@ -1,16 +1,21 @@
 package chat.controller;
 
+import chat.History.XMLHistory;
 import chat.model.Message;
 import chat.util.ServletUtil;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import org.xml.sax.SAXException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -26,6 +31,18 @@ public class Server extends HttpServlet {
     private List<Message> history = new ArrayList<Message>();
 
     private static Logger logger = Logger.getLogger(Server.class.getName());
+
+    @Override
+    public void init() throws ServletException {
+        try {
+            loadHistory();
+            for (int i = 0; i < history.size(); ++i) {
+                logger.info(history.get(i).getAuthor() + " " + history.get(i).getMessage() + " " + history.get(i).getMethodRequest());
+            }
+        } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
+            logger.error(e);
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -56,8 +73,9 @@ public class Server extends HttpServlet {
             logger.info(message.getAuthor() + " " + message.getMessage() + " " + message.getMethodRequest());
             message.setDate(getCurrentDate());
             history.add(message);
+            XMLHistory.addData(message);
             response.setStatus(HttpServletResponse.SC_OK);
-        } catch (ParseException e) {
+        } catch (ParseException | ParserConfigurationException | SAXException | TransformerException e) {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -83,11 +101,12 @@ public class Server extends HttpServlet {
                 deleteMessage.setDeleted(true);
                 history.set(deleteIndex, deleteMessage);
                 history.add(message);
+                XMLHistory.updateData(deleteMessage);
                 response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
             }
-        } catch (ParseException e) {
+        } catch (ParseException | ParserConfigurationException | SAXException | TransformerException | XPathExpressionException e) {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -115,13 +134,22 @@ public class Server extends HttpServlet {
                 message.setDate("Message was edited on " + getCurrentDate());
                 history.set(editIndex, editMessage);
                 history.add(message);
+                XMLHistory.updateData(editMessage);
                 response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
             }
-        } catch (ParseException e) {
+        } catch (ParseException | ParserConfigurationException | SAXException | TransformerException | XPathExpressionException e) {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        }
+    }
+
+    private void loadHistory() throws SAXException, IOException, ParserConfigurationException, TransformerException  {
+        if (XMLHistory.doesStorageExist()) {
+            history.addAll(XMLHistory.getMessages());
+        } else {
+            XMLHistory.createStorage();
         }
     }
 
