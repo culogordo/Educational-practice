@@ -1,0 +1,1 @@
+Change the language level to 7 (File->Project Structure->Project)
