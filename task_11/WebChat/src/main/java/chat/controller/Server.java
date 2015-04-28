@@ -29,7 +29,7 @@ import static chat.util.MessageExchange.*;
 
 @WebServlet("/chat")
 public class Server extends HttpServlet {
-    private List<Message> history =Collections.synchronizedList(new ArrayList<Message>());
+    private List<Message> history = Collections.synchronizedList(new ArrayList<Message>());
 
     private static Logger logger = Logger.getLogger(Server.class.getName());
 

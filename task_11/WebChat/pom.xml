@@ -45,6 +45,16 @@
           <artifactId>jsoup</artifactId>
           <version>1.8.2</version>
       </dependency>
+      <dependency>
+          <groupId>javax.servlet</groupId>
+          <artifactId>jstl</artifactId>
+          <version>1.2</version>
+      </dependency>
+      <dependency>
+          <groupId>taglibs</groupId>
+          <artifactId>standard</artifactId>
+          <version>1.0.6</version>
+      </dependency>
   </dependencies>
   <build>
     <finalName>WebChat</finalName>
