@@ -134,10 +134,6 @@ public final class XMLHistory {
                 if (EDITDELETE.equals(node.getNodeName())) {
                     node.setTextContent(Boolean.toString(message.getEditDelete()));
                 }
-
-                if (METHODREQUEST.equals(node.getNodeName())) {
-                    node.setTextContent(message.getMethodRequest());
-                }
 			}
 
 			Transformer transformer = getTransformer();
@@ -155,7 +151,7 @@ public final class XMLHistory {
 		return file.exists();
 	}
 
-	public static synchronized List<Message> getMessages() throws SAXException, IOException, ParserConfigurationException {
+	public static synchronized List<Message> getMessages(int index) throws SAXException, IOException, ParserConfigurationException {
 		List<Message> messages = new ArrayList<Message>();
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -163,7 +159,7 @@ public final class XMLHistory {
 		document.getDocumentElement().normalize();
 		Element root = document.getDocumentElement(); // Root <messagess> element
 		NodeList messageList = root.getElementsByTagName(MESSAGENODE);
-		for (int i = 0; i < messageList.getLength(); i++) {
+		for (int i = index; i < messageList.getLength(); i++) {
 			Element messageElement = (Element) messageList.item(i);
 			String id = messageElement.getAttribute(ID);
 			String messageText = messageElement.getElementsByTagName(MESSAGE).item(0).getTextContent();

@@ -29,16 +29,20 @@ import static chat.util.MessageExchange.*;
 
 @WebServlet("/chat")
 public class Server extends HttpServlet {
-    private List<Message> history = Collections.synchronizedList(new ArrayList<Message>());
 
     private static Logger logger = Logger.getLogger(Server.class.getName());
 
     @Override
     public void init() throws ServletException {
         try {
-            loadHistory();
-            for (int i = 0; i < history.size(); ++i) {
-                logger.info(history.get(i).getAuthor() + " " + history.get(i).getMessage() + " " + history.get(i).getMethodRequest());
+            if (XMLHistory.doesStorageExist()) {
+                List<Message> history = Collections.synchronizedList(new ArrayList<Message>());
+                history.addAll(XMLHistory.getMessages(0));
+                for (int i = 0; i < history.size(); ++i) {
+                    logger.info(history.get(i).getAuthor() + " " + history.get(i).getMessage() + " " + history.get(i).getMethodRequest());
+                }
+            } else {
+                XMLHistory.createStorage();
             }
         } catch (SAXException e) {
             logger.error(e);
@@ -60,7 +64,14 @@ public class Server extends HttpServlet {
         if (token != null && !"".equals(token)) {
             int index = getIndex(token);
             //logger.info("Index " + index);
-            String messages = getServerResponse(history.subList(index, history.size()), history.size());
+            String messages = null;
+            try {
+                messages = getServerResponse(XMLHistory.getMessages(index), XMLHistory.getStorageSize());
+            } catch (SAXException e) {
+                e.printStackTrace();
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            }
             response.setContentType(ServletUtil.APPLICATION_JSON);
             PrintWriter out = response.getWriter();
             out.print(messages);
@@ -79,7 +90,6 @@ public class Server extends HttpServlet {
             Message message = getMessageFromJSONObject(json);
             logger.info(message.getAuthor() + " " + message.getMessage() + " " + message.getMethodRequest());
             message.setDate(getCurrentDate());
-            history.add(message);
             XMLHistory.addData(message);
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (ParseException e) {
@@ -105,19 +115,10 @@ public class Server extends HttpServlet {
             JSONObject json = getJSONObject(data);
             Message message = getMessageFromJSONObject(json);
             logger.info(message.getAuthor() + " " + message.getMessage() + " " + message.getMethodRequest());
-            int deleteIndex = 0;
-            for (int i = 0; i < history.size(); ++i) {
-                if (history.get(i).getId().equals(message.getId())) {
-                    deleteIndex = i;
-                }
-            }
 
-            Message deleteMessage = history.get(deleteIndex);
-            if (deleteMessage != null) {
-                deleteMessage.setDeleted(true);
-                history.set(deleteIndex, deleteMessage);
-                history.add(message);
-                XMLHistory.updateData(deleteMessage);
+            if (message != null) {
+                XMLHistory.updateData(message);
+                XMLHistory.addData(message);
                 response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
@@ -148,21 +149,11 @@ public class Server extends HttpServlet {
             JSONObject json = getJSONObject(data);
             Message message = getMessageFromJSONObject(json);
             logger.info(message.getAuthor() + " " + message.getMessage() + " " + message.getMethodRequest());
-            int editIndex = 0;
-            for (int i = 0; i < history.size(); ++i) {
-                if (history.get(i).getId().equals(message.getId())) {
-                    editIndex = i;
-                }
-            }
 
-            Message editMessage = history.get(editIndex);
-            if (editMessage != null) {
-                editMessage.setMessage(message.getMessage());
-                editMessage.setDate("Message was edited on " + getCurrentDate());
+            if (message != null) {
                 message.setDate("Message was edited on " + getCurrentDate());
-                history.set(editIndex, editMessage);
-                history.add(message);
-                XMLHistory.updateData(editMessage);
+                XMLHistory.updateData(message);
+                XMLHistory.addData(message);
                 response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
@@ -182,14 +173,6 @@ public class Server extends HttpServlet {
         } catch (XPathExpressionException e) {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-        }
-    }
-
-    private void loadHistory() throws SAXException, IOException, ParserConfigurationException, TransformerException  {
-        if (XMLHistory.doesStorageExist()) {
-            history.addAll(XMLHistory.getMessages());
-        } else {
-            XMLHistory.createStorage();
         }
     }
 
