@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Simple chat</title>
+    <link href="resources/css/style.css" rel="stylesheet" />
+    <script src="resources/js/scripts.js" defer="defer"></script>
+</head>
+<body style="font-family:Verdana">
+<div class="container">
+    <div class="row" style="padding-top:5px;">
+        <div class="col-md-2" style="height: 10px">
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-primary" style="height: 110px">
+                <div class="media-body">
+                    <div class="media">
+                        <a class="pull-left" href="#">
+                            <img class="media-object img-rounded" style="max-height:80px" src="user.png" />
+                        </a>
+                        <div class="media-body">
+                            <h5 id="currentUserName"></h5>
+                            <small class="text-muted"><a href="#" id="buttonEditProfile">Edit your profile</a></small>
+                            <div id="showFormEditProfile"></div>
+                            <p style="color: red" id="errorEditProfile"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-primary connection" style="height: 110px; background: #FFFACD">
+                <h3 class="text-center" id="connection">Connecting to server...!</h3>
+            </div>
+        </div>
+        <div class="col-md-2" style="height: 10px">
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-2" style="height: 10px">
+        </div>
+        <div class="col-md-8">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Chat history
+                </div>
+                <div class="panel-body" style="overflow-y: scroll; height: 320px" id="scrollDown">
+                    <ul class="media-list" id="chatField">
+                    </ul>
+                </div>
+                <div class="panel-footer" style="height: 80px">
+                    <div class="input-group">
+                        <textarea type="text" class="form-control" style="height:60px; resize: none" placeholder="Enter Message" id="newMessageTextArea"></textarea>
+                            <span class="input-group-btn">
+                                <button class="btn btn-info" style="height:60px" type="submit" id="sendButton">send</button>
+                            </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2" style="height: 10px">
+        </div>
+    </div>
+</div>
+<div class="col-md-12">
+    <h5 class="text-center">&copy 2015 chat | Dzmitry Niadzelka</h5>
+</div>
+</body>
+</html>
