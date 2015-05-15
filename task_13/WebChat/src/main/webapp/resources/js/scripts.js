@@ -459,6 +459,7 @@ function storeEditMessage (indexMessageItem, _date, _message, _methodRequest) {
 	toStore.date = _date;
 	toStore.message = _message;
 	toStore.methodRequest = _methodRequest;
+    toStore.editDelete = false;
 	return toStore; 
 }
 
