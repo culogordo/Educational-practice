@@ -131,7 +131,7 @@ public class MessageDaoImplementation implements MessageDao {
             connection = ConnectionManager.getConnection();
             statement = connection.createStatement();
             resultSet = statement.executeQuery("SELECT messages.id, messages.message, messages.date, users.name, messages.deleted, messages.edited\n" +
-                    "FROM messages INNER JOIN users ON messages.author_id=users.id;");
+                    "FROM messages INNER JOIN users ON messages.author_id=users.id ORDER BY messages.id;");
             while (resultSet.next()) {
                 String id = resultSet.getString("id");
                 String author = resultSet.getString("name");
