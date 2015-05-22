@@ -1,0 +1,1 @@
+SELECT message FROM messages WHERE author_id = (SELECT id FROM users WHERE name = 'Bond') AND date >= '2015-07-11' AND date <= '2015-07-12';
