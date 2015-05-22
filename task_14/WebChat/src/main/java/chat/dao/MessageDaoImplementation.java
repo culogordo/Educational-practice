@@ -1,6 +1,5 @@
 package chat.dao;
 
-
 import chat.db.ConnectionManager;
 import chat.model.Message;
 import org.apache.log4j.Logger;
@@ -11,9 +10,11 @@ import java.util.List;
 import java.util.Random;
 
 public class MessageDaoImplementation implements MessageDao {
+
     private static Logger logger = Logger.getLogger(MessageDaoImplementation.class.getName());
+
     @Override
-    public void add(Message message) {
+    public void add (Message message) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
@@ -55,7 +56,7 @@ public class MessageDaoImplementation implements MessageDao {
     }
 
     @Override
-    public void update(Message message, Boolean edited) {
+    public void update (Message message, Boolean edited) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
@@ -89,6 +90,37 @@ public class MessageDaoImplementation implements MessageDao {
     }
 
     @Override
+    public void delete (Message message) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = ConnectionManager.getConnection();
+            preparedStatement = connection.prepareStatement("Update messages SET deleted = ? WHERE id = ?");
+            preparedStatement.setBoolean(1, message.getDeleted());
+            preparedStatement.setString(2, message.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            logger.error(e);
+        } finally {
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    logger.error(e);
+                }
+            }
+
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    logger.error(e);
+                }
+            }
+        }
+    }
+
+    @Override
     public List<Message> selectAll() {
         List<Message> messages = new ArrayList<Message>();
         Connection connection = null;
@@ -98,7 +130,7 @@ public class MessageDaoImplementation implements MessageDao {
         try {
             connection = ConnectionManager.getConnection();
             statement = connection.createStatement();
-            resultSet = statement.executeQuery("SELECT messages.id, messages.message, messages.date, users.name, messages.deleted,\n" +
+            resultSet = statement.executeQuery("SELECT messages.id, messages.message, messages.date, users.name, messages.deleted, messages.edited\n" +
                     "FROM messages INNER JOIN users ON messages.author_id=users.id;");
             while (resultSet.next()) {
                 String id = resultSet.getString("id");
@@ -106,6 +138,10 @@ public class MessageDaoImplementation implements MessageDao {
                 String message = resultSet.getString("message");
                 Boolean deleted = resultSet.getBoolean("deleted");
                 String date = resultSet.getString("date");
+                date = date.substring(0, date.length()-2);
+                if (resultSet.getBoolean("edited") == true) {
+                    date = "Message was edited on " + date;
+                }
                 messages.add(new Message(id, author, message, deleted, date, "POST"));
             }
         } catch (SQLException e) {

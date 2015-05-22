@@ -8,6 +8,8 @@ public interface MessageDao {
 
     void update(Message message, Boolean edited);
 
+    void delete(Message message);
+
     List<Message> selectAll();
 
 }

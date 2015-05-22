@@ -38,16 +38,20 @@ public class Server extends HttpServlet {
         try {
             this.messageDao = new MessageDaoImplementation();
             List<Message> history = messageDao.selectAll();
+            XMLHistory.createStorage();
+
             for (int i = 0; i < history.size(); ++i) {
+                XMLHistory.addData(history.get(i));
                 logger.info(history.get(i).getAuthor() + " " + history.get(i).getMessage() + " " + history.get(i).getMethodRequest());
-            }
-            if (!XMLHistory.doesStorageExist()) {
-                XMLHistory.createStorage();
             }
         } catch (ParserConfigurationException e) {
             logger.error(e);
         } catch (TransformerException e) {
             logger.error(e);
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -117,7 +121,7 @@ public class Server extends HttpServlet {
                 XMLHistory.updateData(message);
                 XMLHistory.addData(message);
                 response.setStatus(HttpServletResponse.SC_OK);
-                messageDao.update(message, false);
+                messageDao.delete(message);
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
             }
@@ -149,12 +153,13 @@ public class Server extends HttpServlet {
 
             if (message != null) {
                 message.setDate(getCurrentDate());
+                messageDao.update(message, true);
+                message.setDate("Message was edited on " + message.getDate());
                 XMLHistory.updateData(message);
                 XMLHistory.addData(message);
                 response.setStatus(HttpServletResponse.SC_OK);
-                messageDao.update(message, true);
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Message does not exist");
             }
         } catch (ParseException e) {
             logger.error(e);

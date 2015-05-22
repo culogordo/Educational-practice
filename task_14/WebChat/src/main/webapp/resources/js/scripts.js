@@ -173,8 +173,6 @@ function delete_(url, data, continueWith, continueWithError) {
 function isError(text) {
 	if(text == "")
 		return false;
-    //if (text == 304)
-      //  return false;
 	try {
 		var obj = JSON.parse(text);
 	} catch(ex) {
@@ -187,7 +185,7 @@ function isError(text) {
 function serverStoped () {
 	var currentUserName = document.getElementById('currentUserName');
 		currentUserName.innerHTML = '';
-	editDeleteWithCurrentUserName;
+	editDeleteWithCurrentUserName ();
 	var sendButton = document.getElementById('sendButton');
 		sendButton.onclick = '';
 	var buttonEditProfile = document.getElementById('buttonEditProfile');
@@ -238,7 +236,7 @@ function ajax(method, url, data, continueWith, continueWithError) {
 
     xhr.onerror = function (e) {
     	var errMsg = 'Server connection error!\n'+
-    	'Refresh you page!';
+    	'Refresh your page!';
         continueWithError(errMsg);
     };
 
@@ -532,7 +530,5 @@ function editMessage (event) {
 
 function uniqueId () {
 	var date = Date.now();
-	var random = Math.random() * Math.random();
-
-	return Math.floor(date * random).toString();
+	return date.toString();
 }
