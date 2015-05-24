@@ -30,7 +30,7 @@ import static chat.util.MessageExchange.*;
 @WebServlet("/chat")
 public class Server extends HttpServlet {
 
-    private static Logger logger = Logger.getLogger(Server.class.getName());
+    private static Logger logger = Logger.getLogger(Server.class);
     private MessageDao messageDao;
 
     @Override
@@ -42,7 +42,7 @@ public class Server extends HttpServlet {
 
             for (int i = 0; i < history.size(); ++i) {
                 XMLHistory.addData(history.get(i));
-                logger.info(history.get(i).getAuthor() + " " + history.get(i).getMessage() + " " + history.get(i).getMethodRequest());
+                logger.info(history.get(i).getAuthor() + " " + history.get(i).getMethodRequest());
             }
         } catch (ParserConfigurationException e) {
             logger.error(e);
@@ -89,7 +89,7 @@ public class Server extends HttpServlet {
         try {
             JSONObject json = getJSONObject(data);
             Message message = getMessageFromJSONObject(json);
-            logger.info(message.getAuthor() + " " + message.getMessage() + " " + message.getMethodRequest());
+            logger.info(message.getAuthor() + " " + message.getMethodRequest());
             message.setDate(getCurrentDate());
             XMLHistory.addData(message);
             response.setStatus(HttpServletResponse.SC_OK);
@@ -115,7 +115,7 @@ public class Server extends HttpServlet {
         try {
             JSONObject json = getJSONObject(data);
             Message message = getMessageFromJSONObject(json);
-            logger.info(message.getAuthor() + " " + message.getMessage() + " " + message.getMethodRequest());
+            logger.info(message.getAuthor() + " " + message.getMethodRequest());
 
             if (message != null) {
                 XMLHistory.updateData(message);
@@ -149,7 +149,7 @@ public class Server extends HttpServlet {
         try {
             JSONObject json = getJSONObject(data);
             Message message = getMessageFromJSONObject(json);
-            logger.info(message.getAuthor() + " " + message.getMessage() + " " + message.getMethodRequest());
+            logger.info(message.getAuthor() + " " + message.getMethodRequest());
 
             if (message != null) {
                 message.setDate(getCurrentDate());
